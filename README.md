@@ -13,9 +13,11 @@ Foreword
 --------
 
 You probably don't need to install Flue! A version of flue that matches the
-implementation that exists on the Marketplace API runs at: ::
+implementation that exists on the Marketplace API runs at:
 
-    http://flue.paas.allizom.org/
+```
+http://flue.paas.allizom.org/
+```
 
 This is already set up in your `settings_local.js` file if you installed your
 copy of Fireplace with `npm install`. Cool!
@@ -31,50 +33,63 @@ Some reasons that you might need to use a local copy of Flue:
 Installation
 ------------
 
-You may wish to run Flue in a `virtualenv` ::
+You may wish to run Flue in a `virtualenv`
 
-    curl -s https://raw.github.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | $SHELL
-    source ~/.profile
-    mkvirtualenv --no-site-packages fireplace
+```bash
+curl -s https://raw.github.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | $SHELL
+source ~/.profile
+mkvirtualenv --no-site-packages fireplace
+```
 
+To use the `virtualenv`, simply run
 
-To use the `virtualenv`, simply run ::
-
-    workon fireplace
+```bash
+workon fireplace
+```
 
 
 Once your virtualenv is up and running, just install the requirements from the
-`requirements.txt` file. ::
+`requirements.txt` file.
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 
 Usage
 -----
 
-To start Flue, run ::
+To start Flue, run
 
-    workon fireplace
-    python main.py
+```bash
+workon fireplace
+python main.py
+```
 
 
 This defaults to `0.0.0.0:5000`.
 
-To control the hostname and port you can use the following otions ::
+To control the hostname and port you can use the following otions
 
-    python flue/main.py --host 127.0.0.1 --port 9999
+```bash
+python flue/main.py --host 127.0.0.1 --port 9999
+```
 
 
 Updating Flue
 -------------
 
-To update Flue ::
+To update Flue
 
-    stackato group marketplace
-    stackato update
+```bash
+stackato group marketplace
+stackato update
+```
 
-You'll be asked to confirm the following ::
+You'll be asked to confirm the following
 
-    Create services to bind to 'flue' ?  [yN]: N
+```
+Create services to bind to 'flue' ?  [yN]: N
+```
 
 Enter `N` (or hit enter) to proceed.
