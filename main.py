@@ -255,6 +255,11 @@ def record_paid():
     return {'error': False}
 
 
+@app.route('/api/v1/apps/<id>/statistics/', methods=['GET', 'POST'])
+def app_stats(id):
+    return json.loads(open('./flatfiles/3serieschart.json', 'r').read())
+
+
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--port', dest='port',
