@@ -257,20 +257,20 @@ def record_paid():
 
 @app.route('/api/v1/apps/<id>/statistics/', methods=['GET', 'POST'])
 def app_stats(id):
-    return json.loads(open('./flatfiles/3serieschart.json', 'r').read())
+    return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
 
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--port', dest='port',
-            help='port', metavar='PORT', default=os.getenv('PORT', '5000'))
+        help='port', metavar='PORT', default=os.getenv('PORT', '5000'))
     parser.add_option('--host', dest='hostname',
-            help='hostname', metavar='HOSTNAME', default='0.0.0.0')
+        help='hostname', metavar='HOSTNAME', default='0.0.0.0')
     parser.add_option('--latency', dest='latency',
-            help='latency (sec)', metavar='LATENCY', default=0)
+        help='latency (sec)', metavar='LATENCY', default=0)
     parser.add_option('--xss', dest='xss',
-            help='xss?', metavar='XSS', default=0)
-    (options, args) = parser.parse_args()
+        help='xss?', metavar='XSS', default=0)
+    options, args = parser.parse_args()
     app.debug = True
     LATENCY = int(options.latency)
     if options.xss:
