@@ -6,7 +6,7 @@ import urllib2
 import uuid
 
 
-SECRET = "This is a value which should be unique to the service."
+SECRET = 'This is a value which should be unique to the service.'
 
 
 def verify_assertion(assertion, audience, is_native):
@@ -20,12 +20,11 @@ def verify_assertion(assertion, audience, is_native):
         output = urllib2.urlopen(url, encoded_args).read()
         print output
         data = json.loads(output)
-        if data['status'] != 'okay':
-            return False
-        return data['email']
+        if data['status'] == 'okay':
+            return data['email']
     except Exception, e:
         print e
-        return False
+    return False
 
 
 _consumer_id = lambda email: hashlib.sha1(email + SECRET).hexdigest()

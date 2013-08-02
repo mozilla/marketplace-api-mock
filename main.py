@@ -16,7 +16,7 @@ from optparse import OptionParser
 
 
 from flask import Flask, make_response, request
-app = Flask("Flue")
+app = Flask('Flue')
 
 import defaults
 import persona
