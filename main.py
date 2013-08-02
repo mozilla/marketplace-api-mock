@@ -6,55 +6,20 @@ or without needing to use -dev (offline mode).
 """
 
 import json
-import os
 import random
-import time
 import urllib
 import urlparse
-from functools import wraps
-from optparse import OptionParser
 
+from flask import make_response, request
 
-from flask import Flask, make_response, request
-app = Flask('Flue')
+import app
 
 import defaults
 import persona
+import rocketfuel
 
 
 PER_PAGE = 5
-LATENCY = 0
-
-
-# Monkeypatching for CORS and JSON.
-ar = app.route
-@wraps(ar)
-def corsify(*args, **kwargs):
-    methods = kwargs.get('methods') or ['GET']
-    def decorator(func):
-        @wraps(func)
-        def wrap(*args, **kwargs):
-            resp = func(*args, **kwargs)
-            if isinstance(resp, (dict, list, tuple, str, unicode)):
-                resp = make_response(json.dumps(resp, indent=2), 200)
-            resp.headers['Access-Control-Allow-Origin'] = '*'
-            resp.headers['Access-Control-Allow-Methods'] = ','.join(methods)
-            resp.headers['Access-Control-Allow-Headers'] = 'API-Filter, X-HTTP-METHOD-OVERRIDE'
-            resp.headers['Content-type'] = 'application/json'
-            if LATENCY:
-                time.sleep(LATENCY)
-            return resp
-
-        if 'methods' in kwargs:
-            kwargs['methods'].append('OPTIONS')
-
-        registered_func = ar(*args, **kwargs)(wrap)
-        registered_func._orig = func
-        return registered_func
-
-    return decorator
-
-app.route = corsify
 
 
 @app.route('/api/v1/account/login/', methods=['POST'])
@@ -261,18 +226,4 @@ def app_stats(id):
 
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option('--port', dest='port',
-        help='port', metavar='PORT', default=os.getenv('PORT', '5000'))
-    parser.add_option('--host', dest='hostname',
-        help='hostname', metavar='HOSTNAME', default='0.0.0.0')
-    parser.add_option('--latency', dest='latency',
-        help='latency (sec)', metavar='LATENCY', default=0)
-    parser.add_option('--xss', dest='xss',
-        help='xss?', metavar='XSS', default=0)
-    options, args = parser.parse_args()
-    app.debug = True
-    LATENCY = int(options.latency)
-    if options.xss:
-        defaults.XSS = bool(options.xss)
-    app.run(host=options.hostname, port=int(options.port))
+    app.run()
