@@ -1,15 +1,57 @@
 import json
 import os
 import time
+import urllib
+import urlparse
 from functools import wraps
 from optparse import OptionParser
 
-from flask import Flask, make_response
+from flask import Flask, make_response, request
 
 import defaults
 
+
 LATENCY = 0
+PER_PAGE = 5
 app = Flask('Flue')
+
+
+def _paginated(field, generator, result_count=24):
+    page = int(request.args.get('offset', 0)) / PER_PAGE
+    if page * PER_PAGE > result_count:
+        items = []
+    else:
+        items = [gen for i, gen in
+                 zip(xrange(min(10, result_count - page * PER_PAGE)),
+                     generator())]
+
+    next_page = None
+    if (page + 1) * PER_PAGE <= result_count:
+        next_page = request.url
+        next_page = next_page[len(request.base_url) -
+                              len(request.path + request.script_root):]
+        if '?' in next_page:
+            next_page_qs = urlparse.parse_qs(
+                next_page[next_page.index('?') + 1:],
+                keep_blank_values=True)
+            next_page_qs = dict(zip(next_page_qs.keys(),
+                                    [x[0] for x in next_page_qs.values()]))
+            next_page = next_page[:next_page.index('?')]
+        else:
+            next_page_qs = {}
+        next_page_qs['offset'] = (page + 1) * PER_PAGE
+        next_page_qs['limit'] = PER_PAGE
+        next_page = next_page + '?' + urllib.urlencode(next_page_qs)
+
+    return {
+        field: items,
+        'meta': {
+            'limit': PER_PAGE,
+            'offset': PER_PAGE * page,
+            'next': next_page,
+            'total_count': result_count,
+        },
+    }
 
 
 # Monkeypatching for CORS and JSON.
