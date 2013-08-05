@@ -165,8 +165,20 @@ def category():
             i += 1
 
     data = _paginated('objects', gen)
-    data['featured'] = [defaults.app('Creatured App', 'creat%d' % i) for
-                        i in xrange(15)]
+    data['featured'] = [defaults.app('Creatured App', 'creat%d' % i)
+                        for i in xrange(15)]
+    data['collections'] = {}
+    pretty_apps = [defaults.app('Featured App', 'creat%d' % i)
+                   for i in xrange(3)]
+    for i in xrange(2):
+        data['collections']['featured-collection-%d' % i] = {
+            'title': defaults.ptext(),
+            'author': defaults.text('Basta Splasha'),
+            'description': defaults.ptext(),
+            'type': 'pretty',
+            'apps': pretty_apps
+        }
+
     return data
 
 
