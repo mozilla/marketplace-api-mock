@@ -195,3 +195,15 @@ def rating():
         },
         'version': version,
     }
+
+
+def collection(name, slug, **kwargs):
+    return {
+        'name': text(name),
+        'slug': slug,
+        'collection_type': kwargs.get('collection_type') or 'standard',
+        'author': text('Basta Splasha'),
+        'description': ptext(),
+        'apps': [app('Featured App', 'creat%d' % i)
+                 for i in xrange(3)]
+    }

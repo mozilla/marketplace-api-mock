@@ -7,8 +7,6 @@ or without needing to use -dev (offline mode).
 
 import json
 import random
-import urllib
-import urlparse
 
 from flask import make_response, request
 
@@ -17,9 +15,6 @@ import app
 import defaults
 import persona
 import rocketfuel
-
-
-PER_PAGE = 5
 
 
 @app.route('/api/v1/account/login/', methods=['POST'])
@@ -92,44 +87,6 @@ def categories():
     }
 
 
-def _paginated(field, generator, result_count=24):
-    page = int(request.args.get('offset', 0)) / PER_PAGE
-    if page * PER_PAGE > result_count:
-        items = []
-    else:
-        items = [gen for i, gen in
-                 zip(xrange(min(10, result_count - page * PER_PAGE)),
-                     generator())]
-
-    next_page = None
-    if (page + 1) * PER_PAGE <= result_count:
-        next_page = request.url
-        next_page = next_page[len(request.base_url) -
-                              len(request.path + request.script_root):]
-        if '?' in next_page:
-            next_page_qs = urlparse.parse_qs(
-                next_page[next_page.index('?') + 1:],
-                keep_blank_values=True)
-            next_page_qs = dict(zip(next_page_qs.keys(),
-                                    [x[0] for x in next_page_qs.values()]))
-            next_page = next_page[:next_page.index('?')]
-        else:
-            next_page_qs = {}
-        next_page_qs['offset'] = (page + 1) * PER_PAGE
-        next_page_qs['limit'] = PER_PAGE
-        next_page = next_page + '?' + urllib.urlencode(next_page_qs)
-
-    return {
-        field: items,
-        'meta': {
-            'limit': PER_PAGE,
-            'offset': PER_PAGE * page,
-            'next': next_page,
-            'total_count': result_count,
-        },
-    }
-
-
 @app.route('/api/v1/account/installed/mine/')
 def installed():
     def gen():
@@ -139,7 +96,7 @@ def installed():
             i += 1
 
     query = request.args.get('q')
-    data = _paginated('objects', gen, 0 if query == 'empty' else 24)
+    data = app._paginated('objects', gen, 0 if query == 'empty' else 24)
     return data
 
 
@@ -152,7 +109,7 @@ def search():
             i += 1
 
     query = request.args.get('q')
-    data = _paginated('objects', gen, 0 if query == 'empty' else 24)
+    data = app._paginated('objects', gen, 0 if query == 'empty' else 24)
     return data
 
 
@@ -164,21 +121,15 @@ def category():
             yield defaults.app('Category Item', 'catm %d' % i)
             i += 1
 
-    data = _paginated('objects', gen)
+    data = app._paginated('objects', gen)
     data['featured'] = [defaults.app('Creatured App', 'creat%d' % i)
                         for i in xrange(15)]
     data['collections'] = {}
-    pretty_apps = [defaults.app('Featured App', 'creat%d' % i)
-                   for i in xrange(3)]
     for i in xrange(2):
-        data['collections']['featured-collection-%d' % i] = {
-            'title': defaults.ptext(),
-            'author': defaults.text('Basta Splasha'),
-            'description': defaults.ptext(),
-            'type': 'pretty',
-            'apps': pretty_apps
-        }
-
+        data['collections']['featured-collection-%d' % i] = (
+            defaults.collection('Collection', 'collection-%d' % i,
+                                collection_type='featured')
+        )
     return data
 
 
@@ -195,7 +146,7 @@ def app_ratings():
 
     slug = request.form.get('app') or request.args.get('app')
 
-    data = _paginated('objects', gen)
+    data = app._paginated('objects', gen)
     data['info'] = {
         'slug': slug,
         'average': random.random() * 4 + 1,
