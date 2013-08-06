@@ -47,15 +47,19 @@ def collections_get(slug):
     return app.defaults.collection('Collection %s' % slug, slug)
 
 
-@app.route('/api/v1/rocketfuel/collections/<slug>/add_app/', methods=['POST'])
-def collections_add_app(slug):
-    app_id = app.request.form.get('app')
-
+def _validate_app(app_id, slug):
     if not app_id:
         return api_error({'detail': '`app` was not provided.'})
 
     if app_id in DB['collections'].get(slug, []):
         return api_error({'detail': '`app` already exists in collection.'})
+
+
+@app.route('/api/v1/rocketfuel/collections/<slug>/add_app/', methods=['POST'])
+def collections_add_app(slug):
+    app_id = app.request.form.get('app')
+
+    _validate_app(app_id, slug)
 
     DB['collections'].setdefault(slug, []).append(app_id)
 
@@ -69,8 +73,7 @@ def collections_add_app(slug):
 def collections_remove_app(slug):
     app_id = app.request.form.get('app')
 
-    if not app_id:
-        return api_error({'detail': '`app` was not provided.'})
+    _validate_app(app_id, slug)
 
     # Uncomment if you want things to behave as they would with the real API.
     # if app_id not in DB['collections'].get(slug, []):
@@ -85,3 +88,20 @@ def collections_remove_app(slug):
     collection.update(apps=[])
 
     return collection
+
+
+@app.route('/api/v1/rocketfuel/collections/<slug>/reorder_app/', methods=['POST'])
+def collections_reorder_app(slug):
+    app_id = app.request.form.get('app')
+    position = app.request.form.get('position')
+
+    _validate_app(app_id, slug)
+
+    # Uncomment if you want things to behave as they would with the real API.
+    # if app_id not in DB['collections'].get(slug, []):
+    #     return api_error({'detail': '`app` does not exist in collection.'})
+
+    if not position:
+        return api_error({'detail': '`position` was not provided.'})
+
+    return app.defaults.collection('Collection %s' % slug, slug)
