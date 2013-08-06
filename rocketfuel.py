@@ -22,7 +22,7 @@ def collections_list():
         form = app.request.form
         DB['pk'] += 1
         return {
-            'name': form.get('name'),
+            'title': form.get('title'),
             'description': form.get('description'),
             'id': DB['pk'],
             'apps': [],
