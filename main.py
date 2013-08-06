@@ -126,10 +126,9 @@ def category():
                         for i in xrange(15)]
     data['collections'] = {}
     for i in xrange(2):
-        data['collections']['featured-collection-%d' % i] = (
-            defaults.collection('Collection', 'collection-%d' % i,
+        c = defaults.collection('Collection', 'collection-%d' % i,
                                 collection_type='featured')
-        )
+        data['collections']['featured-collection-%d' % i] = c
     return data
 
 
