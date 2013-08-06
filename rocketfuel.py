@@ -42,7 +42,7 @@ def collections_list():
     return data
 
 
-@app.route('/api/v1/rocketfuel/collections/<slug>/')
+@app.route('/api/v1/rocketfuel/collections/<slug>/', methods=['GET', 'PATCH'])
 def collections_get(slug):
     return app.defaults.collection('Collection %s' % slug, slug)
 
