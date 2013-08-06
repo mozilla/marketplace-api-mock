@@ -29,6 +29,7 @@ def collections_list():
             'collection_type': form.get('collection_type'),
             'category': form.get('category'),
             'region': form.get('region'),
+            'carrier': form.get('carrier'),
         }
 
     def gen():
@@ -69,7 +70,8 @@ def collections_add_app(slug):
     return collection
 
 
-@app.route('/api/v1/rocketfuel/collections/<slug>/remove_app/', methods=['POST'])
+@app.route('/api/v1/rocketfuel/collections/<slug>/remove_app/',
+           methods=['POST'])
 def collections_remove_app(slug):
     app_id = app.request.form.get('app')
 
@@ -90,7 +92,8 @@ def collections_remove_app(slug):
     return collection
 
 
-@app.route('/api/v1/rocketfuel/collections/<slug>/reorder_app/', methods=['POST'])
+@app.route('/api/v1/rocketfuel/collections/<slug>/reorder_app/',
+           methods=['POST'])
 def collections_reorder_app(slug):
     app_id = app.request.form.get('app')
     position = app.request.form.get('position')
