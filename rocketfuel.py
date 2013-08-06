@@ -63,3 +63,25 @@ def collections_add_app(slug):
     collection.update(apps=['/api/v1/apps/app/%s/' % app_id])
 
     return collection
+
+
+@app.route('/api/v1/rocketfuel/collections/<slug>/remove_app/', methods=['POST'])
+def collections_remove_app(slug):
+    app_id = app.request.form.get('app')
+
+    if not app_id:
+        return api_error({'detail': '`app` was not provided.'})
+
+    # Uncomment if you want things to behave as they would with the real API.
+    # if app_id not in DB['collections'].get(slug, []):
+    #     return api_error({'detail': '`app` does not exist in collection.'})
+
+    try:
+        DB['collections'].get(slug, []).remove(app_id)
+    except ValueError:
+        pass
+
+    collection = app.defaults.collection('Collection %s' % slug, slug)
+    collection.update(apps=[])
+
+    return collection
