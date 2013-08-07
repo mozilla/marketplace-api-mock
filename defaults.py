@@ -198,19 +198,15 @@ def rating():
 
 
 def collection(name, slug, **kwargs):
-    data = {
+    return {
         'name': text(name),
         'slug': slug,
         'collection_type': kwargs.get('collection_type') or 'standard',
         'author': text('Basta Splasha'),
         'description': ptext(),
         'apps': [app('Featured App', 'creat%d' % i)
-                 for i in xrange(3)]
+                 for i in xrange(3)],
+        'class': 'blue',
+        'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
+                'mkt-collection-logo.png'
     }
-    if kwargs.get('collection_type') == 'featured':
-        data.update({
-            'class': 'blue',
-            'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
-                    'mkt-collection-logo.png'
-        })
-    return data
