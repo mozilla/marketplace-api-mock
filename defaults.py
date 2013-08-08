@@ -206,7 +206,7 @@ def collection(name, slug, **kwargs):
         'description': ptext(),
         'apps': [app('Featured App', 'creat%d' % i)
                  for i in xrange(3)],
-        'class': 'blue',
+        'layout_type': 'blue',
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png'
     }
