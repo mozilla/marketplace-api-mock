@@ -210,3 +210,25 @@ def collection(name, slug, **kwargs):
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png'
     }
+
+
+def region(**kwargs):
+    return {
+        'id': kwargs.get('id') or 1,
+        'name': kwargs.get('name') or 'Appistan',
+        'resource_uri': kwargs.get('resource_uri') or
+                        '/api/v1/services/region/ap/',
+        'slug': kwargs.get('slug') or 'ap',
+        'default_currency': kwargs.get('default_currency') or 'USD',
+        'default_language': kwargs.get('default_language') or 'en-AP',
+    }
+
+
+def carrier(**kwargs):
+    return {
+        'id': kwargs.get('id') or 1,
+        'name': kwargs.get('name') or 'Seavan Sellular',
+        'resource_uri': kwargs.get('resource_uri') or
+                        '/api/v1/services/carrier/seavan_sellular/',
+        'slug': kwargs.get('slug') or 'seavan_selluar',
+    }

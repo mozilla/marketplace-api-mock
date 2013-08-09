@@ -15,6 +15,7 @@ import app
 import defaults
 import persona
 import rocketfuel
+import services
 
 
 @app.route('/api/v1/account/login/', methods=['POST'])
