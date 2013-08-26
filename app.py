@@ -6,13 +6,15 @@ import urlparse
 from functools import wraps
 from optparse import OptionParser
 
-from flask import Flask, make_response, request
+from flask import Flask, make_response, request, Response
 
 import defaults
 
 
 LATENCY = 0
 PER_PAGE = 5
+Response.default_mimetype = 'application/json'
+
 app = Flask('Flue')
 
 
@@ -72,7 +74,6 @@ def route(*args, **kwargs):
             resp.headers['Access-Control-Allow-Methods'] = ','.join(methods)
             resp.headers['Access-Control-Allow-Headers'] = (
                 'API-Filter, X-HTTP-METHOD-OVERRIDE')
-            resp.headers['Content-type'] = 'application/json'
             if LATENCY:
                 time.sleep(LATENCY)
             return resp

@@ -4,6 +4,8 @@ Rocketfuel is where the publishing tool lives.
 
 import json
 
+from flask import Response
+
 import app
 
 DB = {
@@ -108,3 +110,11 @@ def collections_reorder_app(slug):
         return api_error({'detail': '`position` was not provided.'})
 
     return app.defaults.collection('Collection %s' % slug, slug)
+
+@app.route('/api/v1/rocketfuel/collections/<slug>/image/', methods=['POST', 'GET'])
+def collections_image(slug):
+
+    return Response(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej'
+        '3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5C'
+        'YII='.decode('base64'), mimetype='image/png')
