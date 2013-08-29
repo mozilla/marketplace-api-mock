@@ -125,11 +125,11 @@ def category():
     data = app._paginated('objects', gen)
     data['featured'] = [defaults.app('Creatured App', 'creat%d' % i)
                         for i in xrange(15)]
-    data['collections'] = {}
+    data['collections'] = []
     for i in xrange(2):
         c = defaults.collection('Collection', 'collection-%d' % i,
                                 collection_type='featured')
-        data['collections']['featured-collection-%d' % i] = c
+        data['collections'].append(c)
     return data
 
 
