@@ -18,7 +18,7 @@ Response.default_mimetype = 'application/json'
 app = Flask('Flue')
 
 
-def _paginated(field, generator, result_count=24):
+def _paginated(field, generator, result_count=25):
     page = int(request.args.get('offset', 0)) / PER_PAGE
     if page * PER_PAGE > result_count:
         items = []

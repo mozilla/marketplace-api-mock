@@ -9,7 +9,7 @@ def regions_list():
             yield app.defaults.region(id=i, slug='region-%d' % i)
             i += 1
 
-    data = app._paginated('objects', gen, 24)
+    data = app._paginated('objects', gen, 25)
     return data
 
 
@@ -26,7 +26,7 @@ def carriers_list():
             yield app.defaults.carrier(id=i, slug='carrier-%d' % i)
             i += 1
 
-    data = app._paginated('objects', gen, 24)
+    data = app._paginated('objects', gen, 25)
     return data
 
 

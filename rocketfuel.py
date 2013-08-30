@@ -41,7 +41,7 @@ def collections_list():
             i += 1
 
     query = app.request.args.get('q')
-    data = app._paginated('objects', gen, 0 if query == 'empty' else 24)
+    data = app._paginated('objects', gen, 0 if query == 'empty' else 25)
     return data
 
 
