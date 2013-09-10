@@ -15,7 +15,7 @@ def verify_assertion(assertion, audience, is_native):
         'audience': audience
     }
     encoded_args = urllib.urlencode(query_args)
-    url = 'https://verifier.login.persona.org/verify'
+    url = 'https://happyapp.personatest.org/verify'
     try:
         output = urllib2.urlopen(url, encoded_args).read()
         print output
