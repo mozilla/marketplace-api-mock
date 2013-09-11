@@ -128,8 +128,14 @@ def category():
     data['collections'] = []
     for i in xrange(2):
         c = defaults.collection('Collection', 'collection-%d' % i,
-                                collection_type='featured')
+                                collection_type=0)
         data['collections'].append(c)
+    data['featured'] = [
+        defaults.collection('Featured', 'featured', collection_type=1),
+    ]
+    data['operator'] = [
+        defaults.collection('Operator Shelf', 'operator', collection_type=2),
+    ]
     return data
 
 
