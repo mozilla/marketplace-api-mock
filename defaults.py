@@ -91,6 +91,7 @@ def app(name, slug, **kwargs):
         'content_ratings': {
             'dejus': {'name': '12', 'description': text('Ask your parents')},
             'esrb': {'name': 'L', 'description': text('L for BASTA')},
+            'generic': {'name': '0+', 'description': text('General Audiences')}
         },
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
