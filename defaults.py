@@ -82,6 +82,7 @@ def app(name, slug, **kwargs):
             'average': random.random() * 4 + 1,
             'count': int(random.random() * 500),
         },
+        'release_notes': kwargs.get('release_notes', ptext(100)),
         'notices': random.choice(MESSAGES),
         'support_email': text('support@%s.com' % slug),
         'homepage': 'http://marketplace.mozilla.org/',
