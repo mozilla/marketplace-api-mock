@@ -107,13 +107,15 @@ def app(name, slug, **kwargs):
                             'body_label': 'generic', 'rating_label': '3',
                             'description': text('fun 4 all but baby')},
             },
-            'descriptors': [
-                {'label': 'classind-lang', 'name': 'Improper Language', 'ratings_body': 'classind'},
-                {'label': 'esrb-scary', 'name': 'Scary Themes', 'ratings_body': 'esrb'},
-                {'label': 'generic-intense-violence', 'name': 'Intense Violence', 'ratings_body': 'generic'},
-                {'label': 'pegi-scary', 'name': 'Fear', 'ratings_body': 'pegi'},
-                {'label': 'usk-scary', 'name': 'Frightening Content', 'ratings_body': 'usk'},
-            ],
+            'descriptors': {
+                'classind': [{'label': 'lang', 'name': text('Foul Language')}],
+                'esrb': [{'label': 'scary', 'name': text('Scary Themes')}],
+                'generic': [{'label': 'scary', 'name': text('Fear')},
+                            {'label': 'drugs', 'name': text('Drugs')},
+                            {'label': 'sex', 'name': text('Sex')}],
+                'pegi': [{'label': 'scary', 'name': text('Fear')}],
+                'usk': [{'label': 'scary','name': text('Scary Content')}],
+            },
             'interactive_elements': [
                 {'label': 'users-interact', 'name': 'Users Interact'},
                 {'label': 'shares-info', 'name': 'Shares Info'},
