@@ -91,16 +91,16 @@ def app(name, slug, **kwargs):
         'upsell': False,
         'content_ratings': {
             'ratings': {
-                'br': {'body': 'CLASSIND', 'rating': '12+',
+                'classind': {'body': 'CLASSIND', 'rating': '12+',
                        'body_label': 'classind', 'rating_label': '12',
                        'description': text('Ask your parents')},
-                'de': {'body': 'USK', 'rating': '0+',
+                'usk': {'body': 'USK', 'rating': '0+',
                        'body_label': 'usk', 'rating_label': '0',
                        'description': text('General Audiences')},
-                'es': {'body': 'PEGI', 'rating': '13+',
+                'pegi': {'body': 'PEGI', 'rating': '13+',
                        'body_label': 'pegi', 'rating_label': '13',
                        'description': text('ull shot ur eyez out')},
-                'us': {'body': 'ESRB', 'rating': 'Everyone',
+                'esrb': {'body': 'ESRB', 'rating': 'Everyone',
                        'body_label': 'esrb', 'rating_label': '0',
                        'description': text('L for BASTA')},
                 'generic': {'body': 'GENERIC', 'rating': '3+',
@@ -120,7 +120,13 @@ def app(name, slug, **kwargs):
                 {'label': 'users-interact', 'name': 'Users Interact'},
                 {'label': 'shares-info', 'name': 'Shares Info'},
                 {'label': 'shares-location', 'name': 'Shares Location'},
-            ]
+            ],
+            'regions': {
+                'us': 'esrb',
+                'es': 'pegi',
+                'de': 'usk',
+                'br': 'classind',
+            }
         },
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
