@@ -192,6 +192,15 @@ def record_paid():
 def app_stats(id):
     return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
+@app.route('/api/v1/fireplace/consumer-info/', methods=['GET'])
+def consumer_info():
+    return {
+        'region': 'us',
+        'installed': [],
+        'developed': [],
+        'purchased': [],
+    }
+
 
 if __name__ == '__main__':
     app.run()
