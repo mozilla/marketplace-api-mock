@@ -40,7 +40,8 @@ def login():
             'email': email,
             'region': 'us',
         },
-        'permissions': {}
+        'permissions': {},
+        'apps': defaults._user_apps(),
     }
 
 
@@ -197,9 +198,7 @@ def app_stats(id):
 def consumer_info():
     return {
         'region': 'us',
-        'installed': [],
-        'developed': [],
-        'purchased': [],
+        'apps': defaults._user_apps()
     }
 
 

@@ -45,6 +45,20 @@ SCREENSHOT_MAP = [
     (72, 72384),
 ]
 
+# Mapping between special app slug to their ids.
+SPECIAL_SLUGS_TO_IDS = {
+    'installed': 414141,
+    'developed': 424242,
+    'purchased': 434343,
+}
+
+def _user_apps():
+    return {
+        'installed': [SPECIAL_SLUGS_TO_IDS['installed']],
+        'developed': [SPECIAL_SLUGS_TO_IDS['developed']],
+        'purchased': [SPECIAL_SLUGS_TO_IDS['purchased']]
+    }
+
 
 def _app_preview():
     url = ('https://marketplace-dev-cdn.allizom.org/'
@@ -62,6 +76,7 @@ def app(name, slug, **kwargs):
     # In the API everything here except `user` should be serialized and
     # keyed off app_id:region:locale.
     data = {
+        'id': SPECIAL_SLUGS_TO_IDS.get(slug, random.randint(1, 40000)),
         'name': text(name),
         'slug': slug,
         'description': escape(kwargs.get('description', ptext(100))),
