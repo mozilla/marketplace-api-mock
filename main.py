@@ -156,7 +156,7 @@ def app_ratings():
         'slug': slug,
         'average': random.random() * 4 + 1,
     }
-    data.update(defaults.app_user_data(slug))
+    data.update(defaults.rating_user_data(slug))
     return data
 
 
