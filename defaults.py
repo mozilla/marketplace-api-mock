@@ -164,10 +164,9 @@ def app(name, slug, **kwargs):
     return data
 
 
-def app_user_data(slug=None):
+def rating_user_data(slug=None):
     data = {
         'user': {
-            'developed': rand_bool(),
             'has_rated': rand_bool(),
             'can_rate': rand_bool(),
         }
@@ -185,7 +184,17 @@ def app_user_data(slug=None):
         data['user']['can_rate'] = True
     elif slug == 'cant_rate':
         data['user']['can_rate'] = False
-    elif slug == 'developer':
+
+    return data
+
+def app_user_data(slug=None):
+    data = {
+        'user': {
+            'developed': rand_bool(),
+        }
+    }
+    # Conditional slugs for great debugging.
+    if slug == 'developer':
         data['user']['developed'] = True
     elif slug == 'user':
         data['user']['developed'] = False
