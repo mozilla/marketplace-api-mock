@@ -209,7 +209,7 @@ def app_user_data(slug=None):
         }
     }
     # Conditional slugs for great debugging.
-    if slug == 'developer':
+    if slug == 'developed':
         data['user']['developed'] = True
     elif slug == 'user':
         data['user']['developed'] = False
