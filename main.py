@@ -102,6 +102,7 @@ def installed():
     return data
 
 
+@app.route('/api/v1/fireplace/search/', endpoint='search-fireplace')
 @app.route('/api/v1/apps/search/')
 def search():
     def gen():
