@@ -40,9 +40,10 @@ MESSAGES = [
 ]
 
 SCREENSHOT_MAP = [
-    (70, 70367),
-    (78, 78540),
-    (72, 72384),
+    (126, 126144),
+    (131, 131610),
+    (92, 92498),
+    (118, 118204)
 ]
 
 # Mapping between special app slug to their ids.
@@ -61,7 +62,7 @@ def _user_apps():
 
 
 def _app_preview():
-    url = ('https://marketplace-dev-cdn.allizom.org/'
+    url = ('https://marketplace.cdn.mozilla.net/'
            'img/uploads/previews/%%s/%d/%d.png' %
                random.choice(SCREENSHOT_MAP))
     return {
@@ -86,10 +87,10 @@ def app(name, slug, **kwargs):
             (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
         'current_version': text('%d.0' % int(random.random() * 20)),
         'icons': {
-            16: '/media/img/icons/firefox-beta.png',
-            48: '/media/img/icons/firefox-beta.png',
-            64: '/media/img/icons/firefox-beta.png',
-            128: '/media/img/icons/firefox-beta.png'
+            16: '/media/img/logos/firefox-256.png',
+            48: '/media/img/logos/firefox-256.png',
+            64: '/media/img/logos/firefox-256.png',
+            128: '/media/img/logos/firefox-256.png'
         },
         'previews': [_app_preview() for i in range(4)],
         'author': random.choice(AUTHORS),
@@ -126,7 +127,7 @@ def app(name, slug, **kwargs):
         data['upsell'] = {
             'id': random.randint(1, 10000),
             'name': ptext(),
-            'icon_url': '/media/img/icons/firefox-beta.png',
+            'icon_url': '/media/img/logos/firefox-256.png',
             'app_slug': 'upsold',
             'resource_uri': '/api/v1/fireplace/app/%s/' % 'upsold',
         }
