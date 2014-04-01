@@ -53,6 +53,16 @@ SPECIAL_SLUGS_TO_IDS = {
     'purchased': 434343,
 }
 
+COLLECTION_COLORS = [
+    '#00953f',
+    '#f78813',
+    '#ce001c',
+    '#a20d55',
+    '#5a197e',
+    '#1e1e9c',
+    '#0099d0',
+]
+
 def _user_apps():
     return {
         'installed': [SPECIAL_SLUGS_TO_IDS['installed']],
@@ -235,7 +245,8 @@ def collection(name, slug, **kwargs):
         'description': ptext(),
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(3)],
-        'layout_type': 'blue',
+        'color': COLLECTION_COLORS[random.randint(0, 6)],
+        'bg_image': '/media/img/sample_bg.jpg',
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png'
     }
