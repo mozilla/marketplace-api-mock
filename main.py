@@ -206,16 +206,16 @@ def consumer_info():
 @app.route('/api/v2/feed/collections/', methods=['GET', 'POST'])
 def collection_listing():
     colls = []
-    num = random.randint(9, 12)
     i = 0
 
-    while i < num:
-        colls.append(defaults.collection('some name %s' % i, 'some_name_%s' % i, collection_type=random.randint(0, 4)))
+    while i < 5:
+        colls.append(defaults.collection('some name %s' % i, 'some_name_%s' % i, collection_type=i))
         i += 1
 
     return {
         'objects': colls
     }
+
 
 if __name__ == '__main__':
     app.run()
