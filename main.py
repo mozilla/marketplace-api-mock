@@ -203,13 +203,22 @@ def consumer_info():
     }
 
 
+@app.route('/api/v1/fireplace/collection/<slug>/',
+           endpoint='collection-fireplace')
+@app.route('/api/v1/rocketfuel/collections/<slug>/')
+def collection_detail(slug):
+    return defaults.collection('Collection %s' % slug, slug, collection_type=0)
+
+
 @app.route('/api/v2/feed/collections/', methods=['GET', 'POST'])
 def collection_listing():
     colls = []
     i = 0
 
     while i < 5:
-        colls.append(defaults.collection('some name %s' % i, 'some_name_%s' % i, collection_type=i))
+        colls.append(defaults.collection('some name %s' % i, 
+                                         'some_name_%s' % i, 
+                                         collection_type=i))
         i += 1
 
     return {
