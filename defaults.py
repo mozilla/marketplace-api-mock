@@ -88,19 +88,17 @@ def app(name, slug, **kwargs):
     # keyed off app_id:region:locale.
     data = {
         'id': SPECIAL_SLUGS_TO_IDS.get(slug, random.randint(1, 40000)),
-        'name': text(name),
+        'name': {'en-US': text(name)},
         'slug': slug,
-        'description': escape(kwargs.get('description', ptext(100))),
+        'description': {'en-US': escape(kwargs.get('description',
+                                                   ptext(100)))},
         'is_packaged': slug == 'packaged' or rand_bool(),
         'manifest_url':
             'http://%s%s.testmanifest.com/manifest.webapp' %
             (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
         'current_version': text('%d.0' % int(random.random() * 20)),
         'icons': {
-            16: '/media/img/logos/firefox-256.png',
-            48: '/media/img/logos/firefox-256.png',
-            64: '/media/img/logos/firefox-256.png',
-            128: '/media/img/logos/firefox-256.png'
+            64: 'https://marketplace.cdn.mozilla.net/img/uploads/addon_icons/461/461685-64.png',
         },
         'previews': [_app_preview() for i in range(4)],
         'author': random.choice(AUTHORS),
