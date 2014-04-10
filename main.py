@@ -207,20 +207,25 @@ def consumer_info():
            endpoint='collection-fireplace')
 @app.route('/api/v1/rocketfuel/collections/<slug>/')
 def collection_detail(slug):
-    return defaults.collection('Collection %s' % slug, slug, collection_type=0)
+    """
+    Returns a randomly generated colleciton.
+
+    name -- name of collection
+    _num -- as GET param, num of apps to add to collection.
+            Not part of API, for benchmark purposes only.
+    """
+    num = int(request.args.get('_num', 16))
+    return defaults.collection(slug, '%s-%s' % (slug, num),
+                               num=num, collection_type=0)
 
 
 @app.route('/api/v2/feed/collections/', methods=['GET', 'POST'])
 def collection_listing():
     colls = []
-    i = 0
-
-    while i < 5:
-        colls.append(defaults.collection('some name %s' % i, 
-                                         'some_name_%s' % i, 
+    for i in range(5):
+        colls.append(defaults.collection('some name %s' % i,
+                                         'some_name_%s' % i,
                                          collection_type=i))
-        i += 1
-
     return {
         'objects': colls
     }

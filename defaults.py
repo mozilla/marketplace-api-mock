@@ -236,7 +236,7 @@ def rating():
     }
 
 
-def collection(name, slug, **kwargs):
+def collection(name, slug, num=3, **kwargs):
     return {
         'name': text(name),
         'slug': slug,
@@ -244,7 +244,7 @@ def collection(name, slug, **kwargs):
         'author': text('Basta Splasha'),
         'description': ptext(),
         'apps': [app('Featured App', 'creat%d' % i) for
-                 i in xrange(3)],
+                 i in xrange(num)],
         'color': COLLECTION_COLORS[random.randint(0, 6)],
         'bg_image': '/media/img/sample_bg.jpg',
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
