@@ -114,9 +114,9 @@ def app(name, slug, **kwargs):
         'public_stats': False,
         'upsell': False,
         'content_ratings': {
-            'body': 'usk',
-            'rating': '0',
-            'descriptors': ['scary'],
+            'body': 'generic',
+            'rating': '12',
+            'descriptors': ['scary', 'lang', 'drugs'],
             'interactive_elements': ['users-interact', 'shares-info']
         },
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
