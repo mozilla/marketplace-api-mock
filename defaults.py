@@ -117,7 +117,7 @@ def app(name, slug, **kwargs):
             'body': 'generic',
             'rating': '12',
             'descriptors': ['scary', 'lang', 'drugs'],
-            'interactive_elements': ['users-interact', 'shares-info']
+            'interactives': ['users-interact', 'shares-info']
         },
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
