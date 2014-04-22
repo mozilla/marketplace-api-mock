@@ -98,21 +98,23 @@ def installed():
             i += 1
 
     query = request.args.get('q')
-    data = app._paginated('objects', gen, 0 if query == 'empty' else 25)
+    data = app._paginated('objects', gen, 0 if query == 'empty' else 42)
     return data
 
 
 @app.route('/api/v1/fireplace/search/', endpoint='search-fireplace')
 @app.route('/api/v1/apps/search/')
 def search():
+    offset = int(request.args.get('offset', 0))
     def gen():
         i = 0
         while 1:
-            yield defaults.app('Result', 'sr%d' % i)
+            nb = i + 1 + offset
+            yield defaults.app('Result %d' % nb, 'sr%d' % nb)
             i += 1
 
     query = request.args.get('q')
-    data = app._paginated('objects', gen, 0 if query == 'empty' else 25)
+    data = app._paginated('objects', gen, 0 if query == 'empty' else 42)
     return data
 
 

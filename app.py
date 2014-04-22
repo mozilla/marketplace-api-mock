@@ -12,23 +12,24 @@ import defaults
 
 
 LATENCY = 0
-PER_PAGE = 5
+PER_PAGE = 25
 Response.default_mimetype = 'application/json'
 
 app = Flask('Flue')
 
 
-def _paginated(field, generator, result_count=25):
-    page = int(request.args.get('offset', 0)) / PER_PAGE
-    if page * PER_PAGE > result_count:
+def _paginated(field, generator, result_count=42):
+    per_page = int(request.args.get('limit', PER_PAGE))
+    page = int(request.args.get('offset', 0)) / per_page
+    if page * per_page > result_count:
         items = []
     else:
         items = [gen for i, gen in
-                 zip(xrange(min(10, result_count - page * PER_PAGE)),
+                 zip(xrange(min(per_page, result_count - page * per_page)),
                      generator())]
 
     next_page = None
-    if (page + 1) * PER_PAGE <= result_count:
+    if (page + 1) * per_page <= result_count:
         next_page = request.url
         next_page = next_page[len(request.base_url) -
                               len(request.path + request.script_root):]
@@ -41,15 +42,15 @@ def _paginated(field, generator, result_count=25):
             next_page = next_page[:next_page.index('?')]
         else:
             next_page_qs = {}
-        next_page_qs['offset'] = (page + 1) * PER_PAGE
-        next_page_qs['limit'] = PER_PAGE
+        next_page_qs['offset'] = (page + 1) * per_page
+        next_page_qs['limit'] = per_page
         next_page = next_page + '?' + urllib.urlencode(next_page_qs)
 
     return {
         field: items,
         'meta': {
-            'limit': PER_PAGE,
-            'offset': PER_PAGE * page,
+            'limit': per_page,
+            'offset': per_page * page,
             'next': next_page,
             'total_count': result_count,
         },
