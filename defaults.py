@@ -246,7 +246,8 @@ def collection(name, slug, num=3, **kwargs):
         'color': COLLECTION_COLORS[random.randint(0, 6)],
         'bg_image': '/media/img/sample_bg.jpg',
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
-                'mkt-collection-logo.png'
+                'mkt-collection-logo.png',
+        'url': '/collection/' + slug
     }
 
 
