@@ -271,3 +271,62 @@ def carrier(**kwargs):
                         '/api/v1/services/carrier/seavan_sellular/',
         'slug': kwargs.get('slug') or 'seavan_selluar',
     }
+
+
+def feed_item(item_type='app', collection=collection(), item_type='collection'):
+    item_id = random.randint(1, 999)
+
+    return {
+        'app': app('feed app', 'feed-app', description=xss_text),
+        'carrier': carrier().slug,
+        'collection': collection,
+        'id': item_id,
+        'item_type': item_type,
+        'resource_url': '/api/v2/feed/items/' + item_id + '/',
+        'region': region().slug
+    }
+
+
+def feed_app(feedapp_type='icon'):
+    app_id = random.randint(1, 999)
+    pullquote = {
+        'en-US': 'This flipped my perspective like a Stetson in the wind',
+        'fr': "C'est la fin du monde!!!"
+    }
+    pq_text = {
+        'en-US': 'Lots of people overuse the term gamechanger so I will also...',
+        'fr': 'Ou est la bibliotheque?'
+    }
+
+    return {
+        'app': app('feed app', 'feed-app', description=xss_text),
+        'background_color': COLLECTION_COLORS[random.randint(0, 6)],
+        'description': {
+            'en-US': 'An English description you daft sprog',
+            'fr': 'Un description francais'
+        },
+        'feedapp_type': feedapp_type,
+        'image': '/media/img/sample_bg.jpg',
+        'id': app_id,
+        'preview': preview(),
+        'pullquote_attribute': pullquote,
+        'pullquote_rating': random.randint(1, 5),
+        'pullquote_text': pq_text,
+        'slug': 'some-feed-app-' + app_id,
+        'url': '/api/v2/feed/apps/' + app_id
+    }
+
+
+def preview():
+    pid = random.randint(1, 999)
+
+    return {
+        'id': pid,
+        'position': 1,
+        'thumbnail_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
+                         'mkt-collection-logo.png',
+        'image_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
+                     'mkt-collection-logo.png',
+        'filetype': 'image/png',
+        'resource_uri': 'pi/v1/apps/preview/' + pid
+    }
