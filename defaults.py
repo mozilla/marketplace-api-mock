@@ -273,7 +273,7 @@ def carrier(**kwargs):
     }
 
 
-def feed_item(item_type='app', collection=collection(), item_type='collection'):
+def feed_item(item_type='collection', collection=collection()):
     item_id = random.randint(1, 999)
 
     return {
