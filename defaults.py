@@ -76,7 +76,7 @@ def _app_preview():
            'img/uploads/previews/%%s/%d/%d.png' %
                random.choice(SCREENSHOT_MAP))
     return {
-        'caption': ptext(5),
+        'caption': ptext(len=5),
         'filetype': 'image/png',
         'thumbnail_url': url % 'thumbs',
         'image_url': url % 'full',
@@ -220,7 +220,7 @@ def rating():
     id_ = random.randint(1000, 9999)
     return {
         'rating': 4,
-        'body': ptext(20),
+        'body': ptext(len=20),
         'is_flagged': random.randint(1, 5) == 1,
         'is_author': random.randint(1, 5) == 1,
         'posted': rand_posted(),
@@ -238,16 +238,15 @@ def collection(name, slug, num=3, **kwargs):
     return {
         'name': text(name),
         'slug': slug,
-        'collection_type': kwargs.get('collection_type') or 0,
+        'collection_type': random.choice(['collection', 'shelf']),
         'author': text('Basta Splasha'),
-        'description': ptext(),
+        'description': ptext(len=20),
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
-        'color': COLLECTION_COLORS[random.randint(0, 6)],
-        'bg_image': '/media/img/sample_bg.jpg',
+        'background_color': COLLECTION_COLORS[random.randint(0, 6)],
+        'background_image': '/media/img/sample_bg.jpg',
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
-                'mkt-collection-logo.png',
-        'url': '/collection/' + slug
+                'mkt-collection-logo.png'
     }
 
 
@@ -292,24 +291,15 @@ def feed_item(item_type='collection'):
 
 def feed_app(feedapp_type='icon'):
     app_id = random.randint(1, 999)
-    pullquote = {
-        'en-US': 'This flipped my perspective like a Stetson in the wind',
-        'fr': "C'est la fin du monde!!!"
-    }
-    pq_text = {
-        'en-US': 'Lots of people overuse the term gamechanger so I will also...',
-        'fr': 'Ou est la bibliotheque?'
-    }
+    pullquote = ptext(len=10),
+    pq_text = ptext(len=12),
 
     return {
         'app': app('feed app', 'feed-app', description=xss_text),
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
-        'description': {
-            'en-US': 'An English description you daft sprog',
-            'fr': 'Un description francais'
-        },
+        'description': ptext(),
         'feedapp_type': feedapp_type,
-        'image': '/media/img/sample_bg.jpg',
+        'background_image': '/media/img/sample_bg.jpg',
         'id': app_id,
         'preview': preview(),
         'pullquote_attribute': pullquote,
