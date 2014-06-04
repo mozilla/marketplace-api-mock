@@ -44,6 +44,10 @@ def login():
         'apps': defaults._user_apps(),
     }
 
+@app.route('/api/v1/account/logout/', methods=['DELETE'])
+def logout():
+    return ''
+
 
 @app.route('/api/v1/account/settings/mine/', methods=['GET', 'PATCH'])
 def settings():
