@@ -63,6 +63,14 @@ COLLECTION_COLORS = [
     '#0099d0',
 ]
 
+FEED_APP_TYPES = [
+    'icon',
+    'image',
+    'description',
+    'quote',
+    'preview'
+]
+
 def _user_apps():
     return {
         'installed': [SPECIAL_SLUGS_TO_IDS['installed']],
@@ -88,7 +96,7 @@ def app(name, slug, **kwargs):
     # keyed off app_id:region:locale.
     data = {
         'id': SPECIAL_SLUGS_TO_IDS.get(slug, random.randint(1, 40000)),
-        'name': {'en-US': text(name)},
+        'name': text(name),
         'slug': slug,
         'description': {'en-US': escape(kwargs.get('description',
                                                    ptext(100)))},
@@ -235,12 +243,19 @@ def rating():
 
 
 def collection(name, slug, num=3, **kwargs):
+    ctype = random.choice(['collection', 'shelf'])
+    cname = name
+    description = random.choice([ptext(len=20), ''])
+
+    if ctype == 'shelf':
+        cname = 'some operator shelf'
+
     return {
-        'name': text(name),
+        'name': text(cname),
         'slug': slug,
-        'collection_type': random.choice(['collection', 'shelf']),
+        'collection_type': ctype,
         'author': text('Basta Splasha'),
-        'description': ptext(len=20),
+        'description': description,
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
@@ -274,39 +289,41 @@ def carrier(**kwargs):
 
 def feed_item(item_type='collection'):
     item_id = random.randint(1, 999)
-    collection=collection('some feed collection',
-                          'some_feed_collection_' + item_id,
-                          num=random.randint(1, 5))
+    coll=collection('some feed collection',
+                    'some_feed_collection_%d' % item_id,
+                    num=random.randint(2, 5))
 
     return {
-        'app': app('feed app', 'feed-app', description=xss_text),
-        'carrier': carrier().slug,
-        'collection': collection,
+        'app': feed_app(),
+        'carrier': carrier()['slug'],
+        'collection': coll,
         'id': item_id,
         'item_type': item_type,
-        'resource_url': '/api/v2/feed/items/' + item_id + '/',
-        'region': region().slug
+        'resource_url': '/api/v2/feed/items/%d/' % item_id,
+        'region': region()['slug']
     }
 
 
-def feed_app(feedapp_type='icon'):
+def feed_app():
     app_id = random.randint(1, 999)
-    pullquote = ptext(len=10),
-    pq_text = ptext(len=12),
+    pullquote = ptext(len=10)
+    pq_text = '"' + ptext(len=12) + '"'
+    description = random.choice([ptext(len=20), ''])
+    feedapp_type = random.choice(FEED_APP_TYPES)
 
     return {
-        'app': app('feed app', 'feed-app', description=xss_text),
+        'app': app('feed app %d' % app_id, 'feed-app-%d' % app_id, description=xss_text),
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
-        'description': ptext(),
+        'description': description,
         'feedapp_type': feedapp_type,
         'background_image': '/media/img/sample_bg.jpg',
         'id': app_id,
         'preview': preview(),
-        'pullquote_attribute': pullquote,
+        'pullquote_attribute': 'Kevin Ngo',
         'pullquote_rating': random.randint(1, 5),
         'pullquote_text': pq_text,
-        'slug': 'some-feed-app-' + app_id,
-        'url': '/api/v2/feed/apps/' + app_id
+        'slug': 'some-feed-app-%d' % app_id,
+        'url': '/api/v2/feed/apps/%d' % app_id
     }
 
 
@@ -318,8 +335,7 @@ def preview():
         'position': 1,
         'thumbnail_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                          'mkt-collection-logo.png',
-        'image_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
-                     'mkt-collection-logo.png',
+        'image_url': '/media/img/sample_bg.jpg',
         'filetype': 'image/png',
-        'resource_uri': 'pi/v1/apps/preview/' + pid
+        'resource_uri': 'pi/v1/apps/preview/%d' % pid
     }

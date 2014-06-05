@@ -118,7 +118,7 @@ def search():
     return data
 
 
-@app.route('/api/v1/fireplace/search/featured/')
+@app.route('/api/v2/fireplace/search/featured/')
 def category():
     def gen():
         i = 0
@@ -197,7 +197,7 @@ def app_stats(id):
     return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
 
-@app.route('/api/v1/fireplace/consumer-info/', methods=['GET'])
+@app.route('/api/v2/fireplace/consumer-info/', methods=['GET'])
 def consumer_info():
     return {
         'region': 'us',
@@ -221,15 +221,14 @@ def collection_detail(slug):
                                num=num, collection_type=0)
 
 
-@app.route('/api/v2/feed/collections/', methods=['GET', 'POST'])
-def collection_listing():
-    colls = []
+@app.route('/api/v2/feed/items/', methods=['GET', 'POST'])
+def feed_item_listing():
+    items = []
     for i in range(5):
-        colls.append(defaults.collection('some name %s' % i,
-                                         'some_name_%s' % i,
-                                         collection_type=i))
+        items.append(defaults.feed_item(item_type=random.choice(['collection', 'app'])))
+
     return {
-        'objects': colls
+        'objects': items
     }
 
 
