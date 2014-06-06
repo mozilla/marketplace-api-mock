@@ -287,7 +287,7 @@ def carrier(**kwargs):
     }
 
 
-def feed_item(item_type='collection'):
+def feed_item(feed_type='collection'):
     item_id = random.randint(1, 999)
     coll=collection('some feed collection',
                     'some_feed_collection_%d' % item_id,
@@ -298,7 +298,7 @@ def feed_item(item_type='collection'):
         'carrier': carrier()['slug'],
         'collection': coll,
         'id': item_id,
-        'item_type': item_type,
+        'feed_type': feed_type,
         'resource_url': '/api/v2/feed/items/%d/' % item_id,
         'region': region()['slug']
     }

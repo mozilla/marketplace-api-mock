@@ -229,7 +229,8 @@ def collection_detail(slug):
 def feed_item_listing():
     items = []
     for i in range(5):
-        items.append(defaults.feed_item(item_type=random.choice(['collection', 'app'])))
+        items.append(defaults.feed_item(
+            feed_type=random.choice(['collection', 'app'])))
 
     return {
         'objects': items
