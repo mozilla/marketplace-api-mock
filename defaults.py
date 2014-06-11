@@ -292,9 +292,11 @@ def feed_item(item_type='collection'):
     coll=collection('some feed collection',
                     'some_feed_collection_%d' % item_id,
                     num=random.randint(2, 5))
+    item_type = random.choice(['app', 'collection', 'brand'])
 
     return {
         'app': feed_app(),
+        'brand': feed_brand(),
         'carrier': carrier()['slug'],
         'collection': coll,
         'id': item_id,
@@ -315,7 +317,7 @@ def feed_app():
         'app': app('feed app %d' % app_id, 'feed-app-%d' % app_id, description=xss_text),
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
         'description': description,
-        'feedapp_type': feedapp_type,
+        'type': feedapp_type,
         'background_image': '/media/img/sample_bg.jpg',
         'id': app_id,
         'preview': preview(),
@@ -324,6 +326,24 @@ def feed_app():
         'pullquote_text': pq_text,
         'slug': 'some-feed-app-%d' % app_id,
         'url': '/api/v2/feed/apps/%d' % app_id
+    }
+
+
+def feed_brand(num=6):
+    bid = random.randint(1, 999)
+    layout = random.choice(['list', 'grid'])
+
+    # Full list at: https://github.com/mozilla/zamboni/blob/master/mkt/feed/constants.py
+    brand_type = random.choice(['hidden-gem', 'music', 'travel'])
+
+    return {
+        'apps': [app('Branded App', 'brand%d' % i) for
+                 i in xrange(num)],
+        'id': bid,
+        'layout': layout,
+        'slug': 'brand-%d' % bid,
+        'type': brand_type,
+        'url': '/api/v2/feed/brand%d' % bid
     }
 
 
