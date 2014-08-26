@@ -106,8 +106,8 @@ def installed():
     return data
 
 
-@app.route('/api/v1/fireplace/search/', endpoint='search-fireplace')
-@app.route('/api/v1/apps/search/')
+@app.route('/api/v2/fireplace/search/', endpoint='search-fireplace')
+@app.route('/api/v2/apps/search/')
 def search():
     offset = int(request.args.get('offset', 0))
     def gen():
@@ -147,7 +147,7 @@ def category():
     return data
 
 
-@app.route('/api/v1/apps/rating/', methods=['GET', 'POST'])
+@app.route('/api/v2/apps/rating/', methods=['GET', 'POST'])
 def app_ratings():
     if request.method == 'POST':
         return {'error': False}
@@ -169,7 +169,7 @@ def app_ratings():
     return data
 
 
-@app.route('/api/v1/apps/rating/<id>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v2/apps/rating/<id>/', methods=['GET', 'PUT', 'DELETE'])
 def app_rating(id):
     if request.method in ('PUT', 'DELETE'):
         return {'error': False}
@@ -177,12 +177,12 @@ def app_rating(id):
     return defaults.rating()
 
 
-@app.route('/api/v1/apps/rating/<id>/flag/', methods=['POST'])
+@app.route('/api/v2/apps/rating/<id>/flag/', methods=['POST'])
 def app_rating_flag(id):
     return ''
 
 
-@app.route('/api/v1/fireplace/app/<slug>/')
+@app.route('/api/v2/fireplace/app/<slug>/')
 def app_(slug):
     return defaults.app('Something something %s' % slug, slug)
 
@@ -228,7 +228,7 @@ def collection_detail(slug):
                                num=num, collection_type=0)
 
 
-@app.route('/api/v2/feed/items/', methods=['GET', 'POST'])
+@app.route('/api/v2/feed/get/', methods=['GET', 'POST'])
 def feed_item_listing():
     items = []
     for i in range(5):
