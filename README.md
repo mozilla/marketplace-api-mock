@@ -16,7 +16,7 @@ You probably don't need to install Flue! A version of flue that matches the
 implementation that exists on the Marketplace API runs at:
 
 ```
-http://flue.paas.allizom.org/
+https://flue.paas.allizom.org/
 ```
 
 This is already set up in your `settings_local.js` file if you installed your
