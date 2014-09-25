@@ -14,8 +14,6 @@ import app
 
 import defaults
 import persona
-import rocketfuel
-import services
 
 
 @app.route('/api/v1/account/login/', methods=['POST'])
@@ -43,6 +41,7 @@ def login():
         'permissions': {},
         'apps': defaults._user_apps(),
     }
+
 
 @app.route('/api/v1/account/logout/', methods=['DELETE'])
 def logout():
@@ -110,6 +109,7 @@ def installed():
 @app.route('/api/v2/apps/search/')
 def search():
     offset = int(request.args.get('offset', 0))
+
     def gen():
         i = 0
         while 1:
@@ -123,6 +123,7 @@ def search():
 
 
 @app.route('/api/v2/fireplace/search/featured/', endpoint='featured-fireplace')
+@app.route('/api/v2/apps/recommend/', endpoint='apps-recommended')
 @app.route('/api/v1/fireplace/search/featured/')
 def category():
     def gen():
@@ -232,7 +233,8 @@ def collection_detail(slug):
 def feed_item_listing():
     items = []
     for i in range(5):
-        items.append(defaults.feed_item(item_type=random.choice(['collection', 'app'])))
+        items.append(
+            defaults.feed_item(item_type=random.choice(['collection', 'app'])))
 
     return {
         'objects': items
