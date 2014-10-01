@@ -16,8 +16,10 @@ import defaults
 import persona
 
 
-@app.route('/api/v1/account/login/', methods=['POST'])
-def login():
+DEFAULT_API_VERSION = 'v1'
+
+@app.route('/api/<version>/account/login/', methods=['POST'])
+def login(version=DEFAULT_API_VERSION):
     assertion = request.form.get('assertion')
     audience = request.form.get('audience')
     is_native = int(request.form.get('is_native'))
@@ -43,13 +45,13 @@ def login():
     }
 
 
-@app.route('/api/v1/account/logout/', methods=['DELETE'])
-def logout():
+@app.route('/api/<version>/account/logout/', methods=['DELETE'])
+def logout(version=DEFAULT_API_VERSION):
     return ''
 
 
-@app.route('/api/v1/account/settings/mine/', methods=['GET', 'PATCH'])
-def settings():
+@app.route('/api/<version>/account/settings/mine/', methods=['GET', 'PATCH'])
+def settings(version=DEFAULT_API_VERSION):
     return {
         'display_name': 'Joe User',
         'email': request.args.get('email'),
@@ -57,29 +59,29 @@ def settings():
     }
 
 
-@app.route('/api/v1/abuse/app/', methods=['POST'])
-def app_abuse():
+@app.route('/api/<version>/abuse/app/', methods=['POST'])
+def app_abuse(version=DEFAULT_API_VERSION):
     if not request.form.get('text'):
         return {'error': True}
     return {'error': False}
 
 
-@app.route('/api/v1/account/feedback/', methods=['POST'])
-def feedback():
+@app.route('/api/<version>/account/feedback/', methods=['POST'])
+def feedback(version=DEFAULT_API_VERSION):
     if not request.form.get('feedback'):
         return {'error': True}
     return {'error': False}
 
 
-@app.route('/api/v1/apps/app/<slug>/privacy/', methods=['GET'])
-def privacy(slug):
+@app.route('/api/<version>/apps/app/<slug>/privacy/', methods=['GET'])
+def privacy(version=DEFAULT_API_VERSION, slug=''):
     return {
         'privacy_policy': defaults.ptext(),
     }
 
 
-@app.route('/api/v1/apps/category/')
-def categories():
+@app.route('/api/<version>/apps/category/')
+def categories(version=DEFAULT_API_VERSION):
     return {
         'objects': [
             defaults.category('shopping', 'Shopping'),
@@ -92,8 +94,8 @@ def categories():
     }
 
 
-@app.route('/api/v1/account/installed/mine/')
-def installed():
+@app.route('/api/<version>/account/installed/mine/')
+def installed(version=DEFAULT_API_VERSION):
     def gen():
         i = 0
         while 1:
@@ -105,9 +107,9 @@ def installed():
     return data
 
 
-@app.route('/api/v2/fireplace/search/', endpoint='search-fireplace')
-@app.route('/api/v2/apps/search/')
-def search():
+@app.route('/api/<version>/fireplace/search/', endpoint='search-fireplace')
+@app.route('/api/<version>/apps/search/')
+def search(version=DEFAULT_API_VERSION):
     offset = int(request.args.get('offset', 0))
 
     def gen():
@@ -122,10 +124,10 @@ def search():
     return data
 
 
-@app.route('/api/v2/fireplace/search/featured/', endpoint='featured-fireplace')
-@app.route('/api/v2/apps/recommend/', endpoint='apps-recommended')
-@app.route('/api/v1/fireplace/search/featured/')
-def category():
+@app.route('/api/<version>/fireplace/search/featured/',
+           endpoint='featured-fireplace')
+@app.route('/api/<version>/apps/recommend/', endpoint='apps-recommended')
+def category(version=DEFAULT_API_VERSION):
     def gen():
         i = 0
         while 1:
@@ -148,8 +150,8 @@ def category():
     return data
 
 
-@app.route('/api/v2/apps/rating/', methods=['GET', 'POST'])
-def app_ratings():
+@app.route('/api/<version>/apps/rating/', methods=['GET', 'POST'])
+def app_ratings(version=DEFAULT_API_VERSION):
     if request.method == 'POST':
         return {'error': False}
 
@@ -170,53 +172,52 @@ def app_ratings():
     return data
 
 
-@app.route('/api/v2/apps/rating/<id>/', methods=['GET', 'PUT', 'DELETE'])
-def app_rating(id):
+@app.route('/api/<version>/apps/rating/<id>/',
+           methods=['GET', 'PUT', 'DELETE'])
+def app_rating(version=DEFAULT_API_VERSION, id=None):
     if request.method in ('PUT', 'DELETE'):
         return {'error': False}
 
     return defaults.rating()
 
 
-@app.route('/api/v2/apps/rating/<id>/flag/', methods=['POST'])
-def app_rating_flag(id):
+@app.route('/api/<version>/apps/rating/<id>/flag/', methods=['POST'])
+def app_rating_flag(version=DEFAULT_API_VERSION, id=None):
     return ''
 
 
-@app.route('/api/v2/fireplace/app/<slug>/')
-def app_(slug):
+@app.route('/api/<version>/fireplace/app/<slug>/')
+def app_(version=DEFAULT_API_VERSION, slug=None):
     return defaults.app('Something something %s' % slug, slug)
 
 
-@app.route('/api/v1/installs/record/', methods=['POST'])
-def record_free():
+@app.route('/api/<version>/installs/record/', methods=['POST'])
+def record_free(version=DEFAULT_API_VERSION):
     return {'error': False}
 
 
-@app.route('/api/v1/receipts/install/', methods=['POST'])
-def record_paid():
+@app.route('/api/<version>/receipts/install/', methods=['POST'])
+def record_paid(version=DEFAULT_API_VERSION):
     return {'error': False}
 
 
-@app.route('/api/v1/apps/<id>/statistics/', methods=['GET', 'POST'])
-def app_stats(id):
+@app.route('/api/<version>/apps/<id>/statistics/', methods=['GET', 'POST'])
+def app_stats(version=DEFAULT_API_VERSION, id=None):
     return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
 
-@app.route('/api/v2/fireplace/consumer-info/', methods=['GET'],
-           endpoint='consumer-info')
-@app.route('/api/v1/fireplace/consumer-info/', methods=['GET'])
-def consumer_info():
+@app.route('/api/<version>/fireplace/consumer-info/', methods=['GET'])
+def consumer_info(version=DEFAULT_API_VERSION):
     return {
         'region': 'us',
         'apps': defaults._user_apps()
     }
 
 
-@app.route('/api/v1/fireplace/collection/<slug>/',
+@app.route('/api/<version>/fireplace/collection/<slug>/',
            endpoint='collection-fireplace')
-@app.route('/api/v1/rocketfuel/collections/<slug>/')
-def collection_detail(slug):
+@app.route('/api/<version>/rocketfuel/collections/<slug>/')
+def collection_detail(version=DEFAULT_API_VERSION, slug=None):
     """
     Returns a randomly generated colleciton.
 
