@@ -1,6 +1,7 @@
 import random
 from cgi import escape
 from datetime import date, timedelta
+from urllib import quote as urllib_quote
 
 
 XSS = False
@@ -26,6 +27,11 @@ def category(slug, name):
         'name': text(name),
         'slug': slug,
     }
+
+
+def quote_outgoing_url(url):
+    return urllib_quote(url, safe='/&=')
+
 
 AUTHORS = [
     text('basta'),
@@ -130,6 +136,15 @@ def app(name, slug, **kwargs):
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
     }
+
+    if slug in ('outgoing-link', 'outgoing-links'):
+        url = quote_outgoing_url('http://www.amazon.com/Jurassic-Park-' +
+            'Swaggasaurus-T-Shirt-White/dp/B00BUZZGAS?tag=' +
+            'designbooksho-20')
+        data['description']['en-US'] += (
+            ' <a href="http://outgoing.mozilla.org/v1/cd3278ee3a8ceee0e5/' +
+            url + '">swag</a>'
+        )
 
     has_price = rand_bool()
     price = '%.2f' % (random.random() * 10)
