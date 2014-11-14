@@ -59,7 +59,7 @@ pip install -r requirements.txt
 Usage
 -----
 
-To start Flue, run
+To start Flue:
 
 ```bash
 workon fireplace
@@ -69,7 +69,7 @@ python main.py
 
 This defaults to `0.0.0.0:5000`.
 
-To control the hostname and port you can use the following otions
+To control the hostname and port you can use the following options:
 
 ```bash
 python flue/main.py --host 127.0.0.1 --port 9999
@@ -79,14 +79,22 @@ python flue/main.py --host 127.0.0.1 --port 9999
 Updating Flue
 -------------
 
-To update Flue
+To update Flue:
 
 ```bash
 stackato group marketplace
-stackato update
+stackato push --no-prompt
+stackato start
 ```
 
-You'll be asked to confirm the following
+Or if you don't want Flue to go temporarily offline during the push:
+
+```bash
+stackato group marketplace
+stackato push
+```
+
+You'll be asked to confirm the following:
 
 ```
 Create services to bind to 'flue' ?  [yN]: N
