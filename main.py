@@ -5,6 +5,7 @@ quickly get up and running without needing your own installation of Zamboni
 or without needing to use -dev (offline mode).
 """
 
+import itertools
 import json
 import random
 
@@ -17,6 +18,7 @@ import persona
 
 
 DEFAULT_API_VERSION = 'v1'
+NUMBER_OF_FEED_ITEMS = 10
 
 @app.route('/api/<version>/account/login/', methods=['POST'])
 def login(version=DEFAULT_API_VERSION):
@@ -219,7 +221,7 @@ def consumer_info(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/rocketfuel/collections/<slug>/')
 def collection_detail(version=DEFAULT_API_VERSION, slug=None):
     """
-    Returns a randomly generated colleciton.
+    Returns a randomly generated collection.
 
     name -- name of collection
     _num -- as GET param, num of apps to add to collection.
@@ -230,12 +232,13 @@ def collection_detail(version=DEFAULT_API_VERSION, slug=None):
                                num=num, collection_type=0)
 
 
-@app.route('/api/v2/feed/get/', methods=['GET', 'POST'])
-def feed_item_listing():
+@app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
+def feed_item_listing(version=DEFAULT_API_VERSION):
     items = []
-    for i in range(5):
-        items.append(
-            defaults.feed_item(item_type=random.choice(['collection', 'app'])))
+    elms = itertools.cycle(['app', 'collection', 'brand'])
+
+    for i in xrange(NUMBER_OF_FEED_ITEMS):
+        items.append(defaults.feed_item(item_type=elms.next()))
 
     return {
         'objects': items

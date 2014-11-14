@@ -36,7 +36,10 @@ def quote_outgoing_url(url):
 AUTHORS = [
     text('basta'),
     text('cvan'),
-    text('Chris Van Halen')
+    text('Chris Van Halen'),
+    text('Kevin Ngo'),
+    text('Chuck Harmston'),
+    text('Davor van der Beergulpen')
 ]
 
 MESSAGES = [
@@ -76,6 +79,8 @@ FEED_APP_TYPES = [
     'quote',
     'preview'
 ]
+
+SAMPLE_BG_IMAGE = '/media/img/sample_bg.jpg'
 
 def _user_apps():
     return {
@@ -257,26 +262,25 @@ def rating():
     }
 
 
-def collection(name, slug, num=3, **kwargs):
-    ctype = random.choice(['collection', 'shelf'])
-    cname = name
+def collection(name, slug, num=3):
     description = random.choice([ptext(len=20), ''])
-
-    if ctype == 'shelf':
-        cname = 'some operator shelf'
+    collection_id = random.randint(1, 999)
 
     return {
-        'name': text(cname),
+        'name': text(name),
+        'id': collection_id,
         'slug': slug,
-        'collection_type': ctype,
+        'app_count': num,
+        'type': random.choice(['promo', 'listing']),
         'author': text('Basta Splasha'),
         'description': description,
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
-        'background_image': '/media/img/sample_bg.jpg',
+        'background_image': SAMPLE_BG_IMAGE,
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
-                'mkt-collection-logo.png'
+                'mkt-collection-logo.png',
+        'url': '/api/v2/feed/collections/%d/' % collection_id
     }
 
 
@@ -302,12 +306,11 @@ def carrier(**kwargs):
     }
 
 
-def feed_item(item_type='collection'):
+def feed_item(item_type=None):
     item_id = random.randint(1, 999)
     coll=collection('some feed collection',
                     'some_feed_collection_%d' % item_id,
                     num=random.randint(2, 5))
-    item_type = random.choice(['app', 'collection', 'brand'])
 
     return {
         'app': feed_app(),
@@ -315,8 +318,8 @@ def feed_item(item_type='collection'):
         'carrier': carrier()['slug'],
         'collection': coll,
         'id': item_id,
-        'item_type': item_type,
-        'resource_url': '/api/v2/feed/items/%d/' % item_id,
+        'item_type': item_type or random.choice(['app', 'collection', 'brand']),
+        'url': '/api/v2/feed/items/%d/' % item_id,
         'region': region()['slug']
     }
 
@@ -333,10 +336,10 @@ def feed_app():
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
         'description': description,
         'type': feedapp_type,
-        'background_image': '/media/img/sample_bg.jpg',
+        'background_image': SAMPLE_BG_IMAGE,
         'id': app_id,
         'preview': preview(),
-        'pullquote_attribute': 'Kevin Ngo',
+        'pullquote_attribute': random.choice(AUTHORS),
         'pullquote_rating': random.randint(1, 5),
         'pullquote_text': pq_text,
         'slug': 'some-feed-app-%d' % app_id,
@@ -370,7 +373,7 @@ def preview():
         'position': 1,
         'thumbnail_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                          'mkt-collection-logo.png',
-        'image_url': '/media/img/sample_bg.jpg',
+        'image_url': SAMPLE_BG_IMAGE,
         'filetype': 'image/png',
         'resource_uri': 'pi/v1/apps/preview/%d' % pid
     }
