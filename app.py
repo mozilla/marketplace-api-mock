@@ -1,6 +1,8 @@
 import json
 import os
+import sys
 import time
+import traceback
 import urllib
 import urlparse
 from functools import wraps
@@ -104,6 +106,11 @@ def run():
     options, args = parser.parse_args()
     if options.debug:
         app.debug = True
+    else:
+        @app.errorhandler(500)
+        def error(error):
+            exc_type, exc_value, tb = sys.exc_info()
+            return ''.join(traceback.format_tb(tb))
 
     global LATENCY
     LATENCY = int(options.latency)
