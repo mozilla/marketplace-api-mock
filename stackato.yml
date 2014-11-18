@@ -3,6 +3,6 @@ framework:
     type: python
 
 processes:
-    web: python main.py
+    web: python main.py --no-debug
 
 ignores: ['.git']

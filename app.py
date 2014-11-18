@@ -1,6 +1,8 @@
 import json
 import os
+import sys
 import time
+import traceback
 import urllib
 import urlparse
 from functools import wraps
@@ -99,8 +101,16 @@ def run():
         help='latency (sec)', metavar='LATENCY', default=0)
     parser.add_option('--xss', dest='xss',
         help='xss?', metavar='XSS', default=0)
+    parser.add_option('--no-debug', dest='debug', action='store_false',
+        help='disable debug mode', default=True)
     options, args = parser.parse_args()
-    app.debug = True
+    if options.debug:
+        app.debug = True
+    else:
+        @app.errorhandler(500)
+        def error(error):
+            exc_type, exc_value, tb = sys.exc_info()
+            return ''.join(traceback.format_tb(tb))
 
     global LATENCY
     LATENCY = int(options.latency)
