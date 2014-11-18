@@ -20,6 +20,7 @@ import persona
 DEFAULT_API_VERSION = 'v1'
 NUMBER_OF_FEED_ITEMS = 10
 
+
 @app.route('/api/<version>/account/login/', methods=['POST'])
 def login(version=DEFAULT_API_VERSION):
     assertion = request.form.get('assertion')
@@ -138,16 +139,14 @@ def category(version=DEFAULT_API_VERSION):
 
     data = app._paginated('objects', gen)
     data['collections'] = [
-        defaults.collection('Collection', 'collection-0',
-                            collection_type=0),
-        defaults.collection('Collection', 'collection-1',
-                            collection_type=0),
+        defaults.collection('Collection', 'collection-0'),
+        defaults.collection('Collection', 'collection-1'),
     ]
     data['featured'] = [
-        defaults.collection('Featured', 'featured', collection_type=1),
+        defaults.collection('Featured', 'featured'),
     ]
     data['operator'] = [
-        defaults.collection('Operator Shelf', 'operator', collection_type=2),
+        defaults.op_shelf(),
     ]
     return data
 
@@ -228,8 +227,8 @@ def collection_detail(version=DEFAULT_API_VERSION, slug=None):
             Not part of API, for benchmark purposes only.
     """
     num = int(request.args.get('_num', 16))
-    return defaults.collection(slug, '%s-%s' % (slug, num),
-                               num=num, collection_type=0)
+    return defaults.collection('some collection', '%s-%s' % (slug, num),
+                               num=num)
 
 
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])

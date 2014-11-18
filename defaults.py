@@ -82,6 +82,7 @@ FEED_APP_TYPES = [
 
 SAMPLE_BG_IMAGE = '/media/img/sample_bg.jpg'
 
+
 def _user_apps():
     return {
         'installed': [SPECIAL_SLUGS_TO_IDS['installed']],
@@ -117,7 +118,8 @@ def app(name, slug, **kwargs):
             (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
         'current_version': text('%d.0' % int(random.random() * 20)),
         'icons': {
-            64: 'https://marketplace.cdn.mozilla.net/img/uploads/addon_icons/461/461685-64.png',
+            64: 'https://marketplace.cdn.mozilla.net/'
+                'img/uploads/addon_icons/461/461685-64.png',
         },
         'previews': [_app_preview() for i in range(4)],
         'author': random.choice(AUTHORS),
@@ -206,6 +208,7 @@ def rating_user_data(slug=None):
 
     return data
 
+
 def app_user_data(slug=None):
     data = {
         'user': {
@@ -286,31 +289,31 @@ def collection(name, slug, num=3):
 
 def region(**kwargs):
     return {
-        'id': kwargs.get('id') or 1,
-        'name': kwargs.get('name') or 'Appistan',
-        'resource_uri': kwargs.get('resource_uri') or
-                        '/api/v1/services/region/ap/',
-        'slug': kwargs.get('slug') or 'ap',
-        'default_currency': kwargs.get('default_currency') or 'USD',
-        'default_language': kwargs.get('default_language') or 'en-AP',
+        'id': kwargs.get('id', 1),
+        'name': kwargs.get('name', 'Appistan'),
+        'resource_uri': kwargs.get('resource_uri',
+                                   '/api/v1/services/region/ap/'),
+        'slug': kwargs.get('slug', 'ap'),
+        'default_currency': kwargs.get('default_currency', 'USD'),
+        'default_language': kwargs.get('default_language', 'en-AP'),
     }
 
 
 def carrier(**kwargs):
     return {
-        'id': kwargs.get('id') or 1,
-        'name': kwargs.get('name') or 'Seavan Sellular',
-        'resource_uri': kwargs.get('resource_uri') or
-                        '/api/v1/services/carrier/seavan_sellular/',
-        'slug': kwargs.get('slug') or 'seavan_selluar',
+        'id': kwargs.get('id', 1),
+        'name': kwargs.get('name', 'Seavan Sellular'),
+        'resource_uri': kwargs.get('resource_uri',
+                                   '/api/v1/services/carrier/seavan_sellular/'),
+        'slug': kwargs.get('slug', 'seavan_selluar'),
     }
 
 
 def feed_item(item_type=None):
     item_id = random.randint(1, 999)
-    coll=collection('some feed collection',
-                    'some_feed_collection_%d' % item_id,
-                    num=random.randint(2, 5))
+    coll = collection('some feed collection',
+                      'some_feed_collection_%d' % item_id,
+                      num=random.randint(2, 5))
 
     return {
         'app': feed_app(),
@@ -320,19 +323,20 @@ def feed_item(item_type=None):
         'id': item_id,
         'item_type': item_type or random.choice(['app', 'collection', 'brand']),
         'url': '/api/v2/feed/items/%d/' % item_id,
-        'region': region()['slug']
+        'region': region()['slug'],
+        'shelf': op_shelf()
     }
 
 
 def feed_app():
     app_id = random.randint(1, 999)
-    pullquote = ptext(len=10)
     pq_text = '"' + ptext(len=12) + '"'
     description = random.choice([ptext(len=20), ''])
     feedapp_type = random.choice(FEED_APP_TYPES)
 
     return {
-        'app': app('feed app %d' % app_id, 'feed-app-%d' % app_id, description=xss_text),
+        'app': app('feed app %d' % app_id,
+                   'feed-app-%d' % app_id, description=xss_text),
         'background_color': COLLECTION_COLORS[random.randint(0, 6)],
         'description': description,
         'type': feedapp_type,
@@ -351,7 +355,8 @@ def feed_brand(num=6):
     bid = random.randint(1, 999)
     layout = random.choice(['list', 'grid'])
 
-    # Full list at: https://github.com/mozilla/zamboni/blob/master/mkt/feed/constants.py
+    # Full list at:
+    # https://github.com/mozilla/zamboni/blob/master/mkt/feed/constants.py
     brand_type = random.choice(['hidden-gem', 'music', 'travel'])
 
     return {
@@ -362,6 +367,24 @@ def feed_brand(num=6):
         'slug': 'brand-%d' % bid,
         'type': brand_type,
         'url': '/api/v2/feed/brand%d' % bid
+    }
+
+
+def op_shelf(num=6):
+    shelf_id = random.randint(1, 999)
+
+    return {
+        'apps': [app('Featured App', 'creat%d' % i) for
+                 i in xrange(num)],
+        'app_count': num,
+        'background_image': SAMPLE_BG_IMAGE,
+        'background_image_landing': SAMPLE_BG_IMAGE,
+        'carrier': carrier()['slug'],
+        'id': shelf_id,
+        'name': 'Sample Op Shelf',
+        'region': 'restofworld',
+        'slug': 'sample-op-shelf',
+        'url': '/api/v2/feed/shelves/%d/' % shelf_id
     }
 
 
