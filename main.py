@@ -4,7 +4,6 @@ Pointing your instance of Fireplace using settings.js will allow you to
 quickly get up and running without needing your own installation of Zamboni
 or without needing to use -dev (offline mode).
 """
-
 import itertools
 import json
 import random
@@ -203,7 +202,7 @@ def record_paid(version=DEFAULT_API_VERSION):
     return {'error': False}
 
 
-@app.route('/api/<version>/apps/<id>/statistics/', methods=['GET', 'POST'])
+@app.route('/api/<version>/apps/<id>/statistics/', methods=['GET'])
 def app_stats(version=DEFAULT_API_VERSION, id=None):
     return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
@@ -218,24 +217,8 @@ def consumer_info(version=DEFAULT_API_VERSION):
     }
 
 
-@app.route('/api/<version>/fireplace/collection/<slug>/',
-           endpoint='collection-fireplace')
-@app.route('/api/<version>/rocketfuel/collections/<slug>/')
-def collection_detail(version=DEFAULT_API_VERSION, slug=None):
-    """
-    Returns a randomly generated collection.
-
-    name -- name of collection
-    _num -- as GET param, num of apps to add to collection.
-            Not part of API, for benchmark purposes only.
-    """
-    num = int(request.args.get('_num', 16))
-    return defaults.collection('some collection', '%s-%s' % (slug, num),
-                               num=num)
-
-
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
-def feed_item_listing(version=DEFAULT_API_VERSION):
+def feed(version=DEFAULT_API_VERSION):
     items = []
     elms = itertools.cycle(['app', 'collection', 'brand'])
 
@@ -245,6 +228,21 @@ def feed_item_listing(version=DEFAULT_API_VERSION):
     return {
         'objects': items
     }
+
+
+@app.route('/api/<version>/fireplace/feed/brands/<slug>/', methods=['GET'])
+def feed_brand(version=DEFAULT_API_VERSION, slug=''):
+    return defaults.feed_brand()
+
+
+@app.route('/api/<version>/fireplace/feed/collections/<slug>/', methods=['GET'])
+def feed_collection(version=DEFAULT_API_VERSION, slug=''):
+    return defaults.collection(name='slug', slug=slug)
+
+
+@app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
+def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
+    return defaults.op_shelf()
 
 
 if __name__ == '__main__':
