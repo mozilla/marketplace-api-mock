@@ -47,7 +47,7 @@ arguments.
 ## Deploying an Update
 
 Note that you must be added to the Marketplace Stackato group. File a bug with
-ops (e.g., ```bugzilla.mozilla.org/show_bug.cgi?id=895478```) to gain access.
+ops (e.g., bugzilla.mozilla.org/show_bug.cgi?id=895478) to gain access.
 To deploy an update to the Marketplace mock API that is running on
 ```https://flue.paas.allizom.org/```:
 
@@ -57,6 +57,7 @@ stackato push --no-prompt
 stackato start
 ```
 
+If ```stackato push``` doesn't work, try ```stackato update```.
 If you don't want the instance to go temporarily offline during the push:
 
 ```bash
