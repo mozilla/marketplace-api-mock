@@ -235,7 +235,8 @@ def feed_brand(version=DEFAULT_API_VERSION, slug=''):
     return defaults.feed_brand()
 
 
-@app.route('/api/<version>/fireplace/feed/collections/<slug>/', methods=['GET'])
+@app.route('/api/<version>/fireplace/feed/collections/<slug>/',
+           methods=['GET'])
 def feed_collection(version=DEFAULT_API_VERSION, slug=''):
     return defaults.collection(name='slug', slug=slug)
 
@@ -243,6 +244,11 @@ def feed_collection(version=DEFAULT_API_VERSION, slug=''):
 @app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
 def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
     return defaults.op_shelf()
+
+
+@app.route('/api/<version>/account/newsletter/', methods=['POST'])
+def newsletter(version=DEFAULT_API_VERSION, id=None):
+    return make_response('', 204)
 
 
 if __name__ == '__main__':
