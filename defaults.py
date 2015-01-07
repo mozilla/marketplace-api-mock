@@ -175,7 +175,7 @@ def rating_user_data(slug=None):
     data = {
         'user': {
             'has_rated': rand_bool(),
-            'can_rate': rand_bool(),
+            'can_rate': True,
         }
     }
     if data['user']['can_rate']:
