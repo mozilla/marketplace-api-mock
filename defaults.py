@@ -102,40 +102,41 @@ def app(name, slug, **kwargs):
     # keyed off app_id:region:locale.
     data = {
         'id': SPECIAL_SLUGS_TO_IDS.get(slug, random.randint(1, 40000)),
-        'name': text(name),
-        'slug': slug,
-        'description': {'en-US': escape(kwargs.get('description',
-                                                   ptext(100)))},
-        'is_packaged': slug == 'packaged' or rand_bool(),
-        'manifest_url':
-            'http://%s%s.testmanifest.com/manifest.webapp' %
-            (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
-        'current_version': text('%d.0' % int(random.random() * 20)),
-        'icons': {
-            64: 'https://marketplace.cdn.mozilla.net/'
-                'img/uploads/addon_icons/461/461685-64.png',
-        },
-        'previews': [_app_preview() for i in range(4)],
         'author': random.choice(AUTHORS),
-        'ratings': {
-            'average': random.random() * 4 + 1,
-            'count': int(random.random() * 500),
-        },
-        'release_notes': kwargs.get('release_notes', ptext(100)),
-        'notices': random.choice(MESSAGES),
-        'support_email': text('support@%s.com' % slug),
-        'homepage': 'http://marketplace.mozilla.org/',
-        'privacy_policy': kwargs.get('privacy_policy', ptext()),
-        'public_stats': False,
-        'upsell': False,
+        'categories': ['social', 'games'],
         'content_ratings': {
             'body': 'generic',
             'rating': '12',
             'descriptors': ['scary', 'lang', 'drugs'],
             'interactives': ['users-interact', 'shares-info']
         },
+        'current_version': text('%d.0' % int(random.random() * 20)),
+        'description': {'en-US': escape(kwargs.get('description',
+                                                   ptext(100)))},
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
+        'homepage': 'http://marketplace.mozilla.org/',
+        'icons': {
+            64: 'https://marketplace.cdn.mozilla.net/'
+                'img/uploads/addon_icons/461/461685-64.png',
+        },
+        'is_packaged': slug == 'packaged' or rand_bool(),
+        'manifest_url':
+            'http://%s%s.testmanifest.com/manifest.webapp' %
+            (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
+        'name': text(name),
+        'notices': random.choice(MESSAGES),
+        'previews': [_app_preview() for i in range(4)],
+        'privacy_policy': kwargs.get('privacy_policy', ptext()),
+        'public_stats': False,
+        'slug': slug,
+        'ratings': {
+            'average': random.random() * 4 + 1,
+            'count': int(random.random() * 500),
+        },
+        'release_notes': kwargs.get('release_notes', ptext(100)),
+        'support_email': text('support@%s.com' % slug),
+        'upsell': False,
     }
 
     has_price = rand_bool()
