@@ -63,6 +63,15 @@ def _paginated(field, generator, result_count=42):
 ar = app.route
 
 
+def inject_cors_headers(response, methods=None):
+    if methods is None:
+        methods = [request.method]
+    methods.append('OPTIONS')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = ','.join(methods)
+    response.headers['Access-Control-Allow-Headers'] = (
+        'API-Filter, X-HTTP-METHOD-OVERRIDE')
+
 @wraps(ar)
 def route(*args, **kwargs):
     methods = kwargs.get('methods') or ['GET']
@@ -73,10 +82,7 @@ def route(*args, **kwargs):
             resp = func(*args, **kwargs)
             if isinstance(resp, (dict, list, tuple, str, unicode)):
                 resp = make_response(json.dumps(resp, indent=2), 200)
-            resp.headers['Access-Control-Allow-Origin'] = '*'
-            resp.headers['Access-Control-Allow-Methods'] = ','.join(methods)
-            resp.headers['Access-Control-Allow-Headers'] = (
-                'API-Filter, X-HTTP-METHOD-OVERRIDE')
+            inject_cors_headers(resp, methods)
             if LATENCY:
                 time.sleep(LATENCY)
             return resp
@@ -89,6 +95,13 @@ def route(*args, **kwargs):
         return registered_func
 
     return decorator
+
+
+@app.errorhandler(404)
+def handler404(err):
+    response = make_response(err, 404)
+    inject_cors_headers(response)
+    return response
 
 
 def run():
@@ -110,7 +123,10 @@ def run():
         @app.errorhandler(500)
         def error(error):
             exc_type, exc_value, tb = sys.exc_info()
-            return ''.join(traceback.format_tb(tb))
+            content = ''.join(traceback.format_tb(tb))
+            response = make_response(content, 500)
+            inject_cors_headers(response)
+            return response
 
     global LATENCY
     LATENCY = int(options.latency)
