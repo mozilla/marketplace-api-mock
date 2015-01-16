@@ -56,15 +56,15 @@ SPECIAL_SLUGS_TO_IDS = {
     'purchased': 434343,
 }
 
-COLLECTION_COLORS = [
-    '#00953f',
-    '#f78813',
-    '#ce001c',
-    '#a20d55',
-    '#5a197e',
-    '#1e1e9c',
-    '#0099d0',
-]
+COLLECTION_COLORS = {
+    'ruby': '#CE001C',
+    'amber': '#F78813',
+    'emerald': '#00953F',
+    'topaz': '#0099D0',
+    'sapphire': '#1E1E9C',
+    'amethyst': '#5A197E',
+    'garnet': '#A20D55',
+}.items()
 
 FEED_APP_TYPES = [
     'icon',
@@ -255,6 +255,8 @@ def collection(name, slug, num=3):
     description = random.choice([ptext(len=20), ''])
     collection_id = random.randint(1, 999)
 
+    rand_color = COLLECTION_COLORS[random.randint(0, 6)]
+
     return {
         'name': text(name),
         'id': collection_id,
@@ -265,8 +267,9 @@ def collection(name, slug, num=3):
         'description': description,
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
-        'background_color': COLLECTION_COLORS[random.randint(0, 6)],
+        'background_color': rand_color[1],
         'background_image': SAMPLE_BG_IMAGE,
+        'color': rand_color[0],
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png',
         'url': '/api/v2/feed/collections/%d/' % collection_id
@@ -320,10 +323,13 @@ def feed_app():
     description = random.choice([ptext(len=20), ''])
     feedapp_type = random.choice(FEED_APP_TYPES)
 
+    rand_color = COLLECTION_COLORS[random.randint(0, 6)]
+
     return {
         'app': app('feed app %d' % app_id,
                    'feed-app-%d' % app_id, description=xss_text),
-        'background_color': COLLECTION_COLORS[random.randint(0, 6)],
+        'background_color': rand_color[1],
+        'color': rand_color[0],
         'description': description,
         'type': feedapp_type,
         'background_image': SAMPLE_BG_IMAGE,
