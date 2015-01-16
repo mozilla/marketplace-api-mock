@@ -74,7 +74,7 @@ FEED_APP_TYPES = [
     'preview'
 ]
 
-SAMPLE_BG_IMAGE = '/media/img/sample_bg.jpg'
+SAMPLE_BG_IMAGE = '/media/img/logos/firefox-256.png'
 
 
 def _user_apps():
@@ -117,8 +117,7 @@ def app(name, slug, **kwargs):
                          'android-tablet'],
         'homepage': 'http://marketplace.mozilla.org/',
         'icons': {
-            64: 'https://marketplace.cdn.mozilla.net/'
-                'img/uploads/addon_icons/461/461685-64.png',
+            64: '/media/img/logos/64.png'
         },
         'is_packaged': slug == 'packaged' or rand_bool(),
         'manifest_url':
@@ -365,7 +364,7 @@ def feed_brand(num=6):
 def op_shelf(num=6):
     shelf_id = random.randint(1, 999)
 
-    return {
+    data = {
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
         'app_count': num,
@@ -378,6 +377,11 @@ def op_shelf(num=6):
         'slug': 'sample-op-shelf',
         'url': '/api/v2/feed/shelves/%d/' % shelf_id
     }
+
+    if random.randint(0, 1):
+        data['description'] = '<script>alert("LOL");</script> Description'
+
+    return data
 
 
 def preview():
