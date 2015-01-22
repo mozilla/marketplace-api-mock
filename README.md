@@ -77,6 +77,7 @@ stackato push
 You'll be asked to confirm the following:
 
 ```
+Bind existing services to 'flue' ?  [yN]: N
 Create services to bind to 'flue' ?  [yN]: N
 ```
 
