@@ -10,7 +10,7 @@ from optparse import OptionParser
 
 from flask import Flask, make_response, request, Response
 
-import defaults
+import factory
 
 
 LATENCY = 0
@@ -132,5 +132,5 @@ def run():
     LATENCY = int(options.latency)
 
     if options.xss:
-        defaults.XSS = bool(options.xss)
+        factory.XSS = bool(options.xss)
     app.run(host=options.hostname, port=int(options.port))

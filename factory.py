@@ -28,12 +28,27 @@ def category(slug, name):
     }
 
 AUTHORS = [
-    text('basta'),
-    text('cvan'),
+    text('Lord Basta of the Iron Isles'),
     text('Chris Van Halen'),
     text('Kevin Ngo'),
     text('Chuck Harmston'),
     text('Davor van der Beergulpen')
+]
+
+CARRIERS = [
+    'america_movil',
+    'kddi',
+    'o2',
+    'telefonica',
+    'deutsche_telekom',
+]
+
+REGIONS = [
+    'de',
+    'es',
+    'mx',
+    'jp',
+    'us'
 ]
 
 MESSAGES = [
@@ -250,29 +265,33 @@ def rating():
     }
 
 
-def collection(name, slug, num=3):
+def collection(name, slug, num=6):
     description = random.choice([ptext(len=20), ''])
     collection_id = random.randint(1, 999)
 
-    rand_color = COLLECTION_COLORS[random.randint(0, 6)]
+    rand_color = random.choice(COLLECTION_COLORS)
 
-    return {
+    data = {
         'name': text(name),
         'id': collection_id,
         'slug': slug,
         'app_count': num,
-        'type': random.choice(['promo', 'listing']),
+        'type': 'listing',
         'author': text('Basta Splasha'),
         'description': description,
         'apps': [app('Featured App', 'creat%d' % i) for
                  i in xrange(num)],
         'background_color': rand_color[1],
-        'background_image': SAMPLE_BG_IMAGE,
         'color': rand_color[0],
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png',
         'url': '/api/v2/feed/collections/%d/' % collection_id
     }
+
+    if random.randint(0, 1):
+        data['background_image'] = SAMPLE_BG_IMAGE,
+        data['type'] = 'promo'
+    return data
 
 
 def region(**kwargs):
@@ -281,7 +300,7 @@ def region(**kwargs):
         'name': kwargs.get('name', 'Appistan'),
         'resource_uri': kwargs.get('resource_uri',
                                    '/api/v1/services/region/ap/'),
-        'slug': kwargs.get('slug', 'ap'),
+        'slug': random.choice(REGIONS),
         'default_currency': kwargs.get('default_currency', 'USD'),
         'default_language': kwargs.get('default_language', 'en-AP'),
     }
@@ -293,7 +312,7 @@ def carrier(**kwargs):
         'name': kwargs.get('name', 'Seavan Sellular'),
         'resource_uri': kwargs.get('resource_uri',
                                    '/api/v1/services/carrier/seavan_sellular/'),
-        'slug': kwargs.get('slug', 'seavan_selluar'),
+        'slug': random.choice(CARRIERS),
     }
 
 
@@ -322,7 +341,7 @@ def feed_app():
     description = random.choice([ptext(len=20), ''])
     feedapp_type = random.choice(FEED_APP_TYPES)
 
-    rand_color = COLLECTION_COLORS[random.randint(0, 6)]
+    rand_color = random.choice(COLLECTION_COLORS)
 
     return {
         'app': app('feed app %d' % app_id,
@@ -362,6 +381,7 @@ def feed_brand(num=6):
 
 
 def op_shelf(num=6):
+    _carrier = carrier()['slug']
     shelf_id = random.randint(1, 999)
 
     data = {
@@ -370,9 +390,9 @@ def op_shelf(num=6):
         'app_count': num,
         'background_image': SAMPLE_BG_IMAGE,
         'background_image_landing': SAMPLE_BG_IMAGE,
-        'carrier': carrier()['slug'],
+        'carrier': _carrier,
         'id': shelf_id,
-        'name': 'Sample Op Shelf',
+        'name': '%s Op Shelf' % _carrier.replace('_', ' ').capitalize(),
         'region': 'restofworld',
         'slug': 'sample-op-shelf',
         'url': '/api/v2/feed/shelves/%d/' % shelf_id

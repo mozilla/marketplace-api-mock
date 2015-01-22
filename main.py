@@ -1,5 +1,5 @@
 """
-Flue is a simple application which mocks out the APIs used by Fireplace.
+This is a simple application which mocks out the APIs used by Fireplace.
 Pointing your instance of Fireplace using settings.js will allow you to
 quickly get up and running without needing your own installation of Zamboni
 or without needing to use -dev (offline mode).
@@ -12,39 +12,43 @@ from flask import make_response, request
 
 import app
 
-import defaults
-import persona
+import factory
 
 
 DEFAULT_API_VERSION = 'v1'
 NUMBER_OF_FEED_ITEMS = 10
 
+app_counter = 0
+
+def app_generator():
+    """Generates app with globally unique slugs."""
+    global app_counter
+    while True:
+        app_counter += 1
+        yield factory.app('App %s' % app_counter, 'app-%d' % app_counter)
+
+
+def ratings_generator():
+        i = 0
+        while 1:
+            yield factory.rating()
+            i += 1
+
 
 @app.route('/api/<version>/account/login/', methods=['POST'])
 def login(version=DEFAULT_API_VERSION):
-    assertion = request.form.get('assertion')
-    audience = request.form.get('audience')
-    is_native = int(request.form.get('is_native'))
-
-    print 'Attempting verification:', audience, is_native
-
-    email = persona.verify_assertion(assertion, audience, is_native)
-    if not email:
-        return make_response('{"error": "bad_assertion"}', 403)
-
-    # At this point, we know that the user is a valid user.
-
+    """TODO: update for FxA."""
     return {
         'error': None,
-        'token': persona.get_token(email),
+        'token': 'some token',
         'settings': {
-            'display_name': email.split('@')[0],
-            'email': email,
+            'display_name': 'user',
+            'email': 'user123@mozilla.com',
             'enable_recommendations': True,
             'region': 'us',
         },
         'permissions': {},
-        'apps': defaults._user_apps(),
+        'apps': factory._user_apps(),
     }
 
 
@@ -79,7 +83,7 @@ def feedback(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/apps/app/<slug>/privacy/', methods=['GET'])
 def privacy(version=DEFAULT_API_VERSION, slug=''):
     return {
-        'privacy_policy': defaults.ptext(),
+        'privacy_policy': factory.ptext(),
     }
 
 
@@ -87,26 +91,21 @@ def privacy(version=DEFAULT_API_VERSION, slug=''):
 def categories(version=DEFAULT_API_VERSION):
     return {
         'objects': [
-            defaults.category('shopping', 'Shopping'),
-            defaults.category('games', 'Games'),
-            defaults.category('productivity', 'Productivity'),
-            defaults.category('social', 'Social'),
-            defaults.category('music', 'Music'),
-            defaults.category('lifestyle', 'Thug Life'),
+            factory.category('shopping', 'Shopping'),
+            factory.category('games', 'Games'),
+            factory.category('productivity', 'Productivity'),
+            factory.category('social', 'Social'),
+            factory.category('music', 'Music'),
+            factory.category('lifestyle', 'Thug Life'),
         ]
     }
 
 
 @app.route('/api/<version>/account/installed/mine/')
 def installed(version=DEFAULT_API_VERSION):
-    def gen():
-        i = 0
-        while 1:
-            yield defaults.app('Purchased App', 'purchase%d' % i)
-            i += 1
-
     query = request.args.get('q')
-    data = app._paginated('objects', gen, 0 if query == 'empty' else 42)
+    data = app._paginated('objects', app_generator,
+                          0 if query == 'empty' else 42)
     return data
 
 
@@ -114,16 +113,9 @@ def installed(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/apps/search/')
 def search(version=DEFAULT_API_VERSION):
     offset = int(request.args.get('offset', 0))
-
-    def gen():
-        i = 0
-        while 1:
-            nb = i + 1 + offset
-            yield defaults.app('Result %d' % nb, 'sr%d' % nb)
-            i += 1
-
     query = request.args.get('q')
-    data = app._paginated('objects', gen, 0 if query == 'empty' else 42)
+    data = app._paginated('objects', app_generator,
+                          0 if query == 'empty' else 42)
     return data
 
 
@@ -131,22 +123,16 @@ def search(version=DEFAULT_API_VERSION):
            endpoint='featured-fireplace')
 @app.route('/api/<version>/apps/recommend/', endpoint='apps-recommended')
 def category(version=DEFAULT_API_VERSION):
-    def gen():
-        i = 0
-        while 1:
-            yield defaults.app('Category Item', 'catm %d' % i)
-            i += 1
-
-    data = app._paginated('objects', gen)
+    data = app._paginated('objects', app_generator)
     data['collections'] = [
-        defaults.collection('Collection', 'collection-0'),
-        defaults.collection('Collection', 'collection-1'),
+        factory.collection('Collection', 'collection-0'),
+        factory.collection('Collection', 'collection-1'),
     ]
     data['featured'] = [
-        defaults.collection('Featured', 'featured'),
+        factory.collection('Featured', 'featured'),
     ]
     data['operator'] = [
-        defaults.op_shelf(),
+        factory.op_shelf(),
     ]
     return data
 
@@ -156,20 +142,14 @@ def app_ratings(version=DEFAULT_API_VERSION):
     if request.method == 'POST':
         return {'error': False}
 
-    def gen():
-        i = 0
-        while 1:
-            yield defaults.rating()
-            i += 1
-
     slug = request.form.get('app') or request.args.get('app')
 
-    data = app._paginated('objects', gen)
+    data = app._paginated('objects', ratings_generator)
     data['info'] = {
         'slug': slug,
         'average': random.random() * 4 + 1,
     }
-    data.update(defaults.rating_user_data(slug))
+    data.update(factory.rating_user_data(slug))
     return data
 
 
@@ -179,7 +159,7 @@ def app_rating(version=DEFAULT_API_VERSION, id=None):
     if request.method in ('PUT', 'DELETE'):
         return {'error': False}
 
-    return defaults.rating()
+    return factory.rating()
 
 
 @app.route('/api/<version>/apps/rating/<id>/flag/', methods=['POST'])
@@ -189,7 +169,7 @@ def app_rating_flag(version=DEFAULT_API_VERSION, id=None):
 
 @app.route('/api/<version>/fireplace/app/<slug>/')
 def app_(version=DEFAULT_API_VERSION, slug=None):
-    return defaults.app('Something something %s' % slug, slug)
+    return factory.app('Something something %s' % slug, slug)
 
 
 @app.route('/api/<version>/installs/record/', methods=['POST'])
@@ -211,7 +191,7 @@ def app_stats(version=DEFAULT_API_VERSION, id=None):
 def consumer_info(version=DEFAULT_API_VERSION):
     return {
         'region': 'us',
-        'apps': defaults._user_apps(),
+        'apps': factory._user_apps(),
         # New users default to recommendations enabled.
         'enable_recommendations': True
     }
@@ -223,7 +203,7 @@ def feed(version=DEFAULT_API_VERSION):
     elms = itertools.cycle(['app', 'collection', 'brand'])
 
     for i in xrange(NUMBER_OF_FEED_ITEMS):
-        items.append(defaults.feed_item(item_type=elms.next()))
+        items.append(factory.feed_item(item_type=elms.next()))
 
     return {
         'objects': items
@@ -232,18 +212,18 @@ def feed(version=DEFAULT_API_VERSION):
 
 @app.route('/api/<version>/fireplace/feed/brands/<slug>/', methods=['GET'])
 def feed_brand(version=DEFAULT_API_VERSION, slug=''):
-    return defaults.feed_brand()
+    return factory.feed_brand()
 
 
 @app.route('/api/<version>/fireplace/feed/collections/<slug>/',
            methods=['GET'])
 def feed_collection(version=DEFAULT_API_VERSION, slug=''):
-    return defaults.collection(name='slug', slug=slug)
+    return factory.collection(name='slug', slug=slug)
 
 
 @app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
 def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
-    return defaults.op_shelf()
+    return factory.op_shelf()
 
 
 @app.route('/api/<version>/account/newsletter/', methods=['POST'])

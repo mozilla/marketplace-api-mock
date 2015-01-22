@@ -44,6 +44,15 @@ server at `0.0.0.0:5000`. The server also takes ```--host``` and ```--port```
 arguments.
 
 
+## Developing
+
+To add an endpoint, look into ```main.py``` to add a view that returns a
+response.
+
+If you are generating a mock object, a good place to add that would be in
+```factory.py```.
+
+
 ## Deploying an Update
 
 Note that you must be added to the Marketplace Stackato group. File a bug with
