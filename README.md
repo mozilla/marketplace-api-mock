@@ -71,7 +71,7 @@ If you don't want the instance to go temporarily offline during the push:
 
 ```bash
 stackato group marketplace
-stackato push
+stackato update
 ```
 
 You'll be asked to confirm the following:

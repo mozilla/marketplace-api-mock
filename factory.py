@@ -1,6 +1,6 @@
 import random
 from cgi import escape
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
 
 XSS = False
@@ -236,9 +236,9 @@ def app_user_review(slug, **kwargs):
 user_names = ['Cvan', 'Basta', 'Davor', 'Queen Krupa']
 
 
-def rand_posted():
-    rand_date = date.today() - timedelta(days=random.randint(0, 600))
-    return rand_date.strftime('%b %d %Y %H:%M:%S')
+def rand_datetime():
+    rand_date = datetime.now() - timedelta(days=random.randint(0, 600))
+    return rand_date.strftime('%Y-%m-%dT%H:%M:%S')
 
 
 def rating():
@@ -253,9 +253,10 @@ def rating():
     return {
         'rating': 4,
         'body': ptext(len=20),
+        'created': rand_datetime(),
         'is_flagged': random.randint(1, 5) == 1,
         'is_author': random.randint(1, 5) == 1,
-        'posted': rand_posted(),
+        'modified': rand_datetime(),
         'report_spam': '/api/v1/apps/rating/%d/flag/' % id_,
         'resource_uri': '/api/v1/apps/rating/%d/' % id_,
         'user': {
