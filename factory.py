@@ -150,6 +150,7 @@ def app(name, slug, **kwargs):
         },
         'release_notes': kwargs.get('release_notes', ptext(100)),
         'support_email': text('support@%s.com' % slug),
+        'support_url': text('support.%s.com' % slug),
         'upsell': False,
     }
 
