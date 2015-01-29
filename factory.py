@@ -280,7 +280,7 @@ def app_user_review(slug, **kw):
     return data
 
 
-def review():
+def review(**kw):
     global counter
     counter += 1
 
@@ -291,7 +291,7 @@ def review():
             'latest': False,
         }
 
-    return {
+    return dict({
         'rating': random.randint(1, 5),
         'body': _rand_text(len=20),
         'created': _rand_datetime(),
@@ -305,7 +305,7 @@ def review():
             'id': counter,
         },
         'version': version,
-    }
+    }, **kw)
 
 
 def feed_item(**kw):
@@ -434,6 +434,9 @@ def shelf(**kw):
 def feed():
     """
     Generates a Feed, with at least one of every type of Feed module.
+    Note that the existence of these Feed Items are tied to continuous
+    integration such as the slugs for UA tracking. Keep in mind before
+    changing.
     """
     data = [
         feed_item(item_type='shelf', shelf=shelf(name='Shelf')),
@@ -443,30 +446,36 @@ def feed():
         feed_item(item_type='brand', brand=brand(layout='list')),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
-                                        background=SAMPLE_BG,
-                                        description=_rand_text(),
                                         slug='grouped',
-                                        name='Mega Collection')),
+                                        name='Mega Collection'),
+                                        background=SAMPLE_BG,
+                                        description=_rand_text()),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
+                                        slug='coll-promo',
                                         name='Coll Promo')),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
-                                        description=_rand_text(),
-                                        name='Coll Desc')),
+                                        slug='coll-promo-desc',
+                                        name='Coll Promo Desc'),
+                                        description=_rand_text()),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
-                                        background=SAMPLE_BG,
-                                        name='Coll Promo Background')),
+                                        slug='coll-promo-bg',
+                                        name='Coll Promo Background'),
+                                        background=SAMPLE_BG),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
+                                        slug='coll-promo-bg-desc',
                                         description=_rand_text(),
                                         name='Coll Promo Background Desc')),
         feed_item(item_type='collection',
                   collection=collection(type='listing',
+                                        slug='coll-listing',
                                         name='Coll Listing')),
         feed_item(item_type='collection',
                   collection=collection(type='listing',
+                                        slug='coll-listing-desc',
                                         description=_rand_text(),
                                         name='Coll Listing Desc')),
     ]
