@@ -16,23 +16,16 @@ import factory
 
 
 DEFAULT_API_VERSION = 'v1'
-NUMBER_OF_FEED_ITEMS = 10
 
-app_counter = 0
 
 def app_generator():
-    """Generates app with globally unique slugs."""
-    global app_counter
     while True:
-        app_counter += 1
-        yield factory.app('App %s' % app_counter, 'app-%d' % app_counter)
+        yield factory.app()
 
 
-def ratings_generator():
-        i = 0
-        while 1:
-            yield factory.rating()
-            i += 1
+def review_generator():
+    while True:
+        yield factory.review()
 
 
 @app.route('/api/<version>/account/login/', methods=['POST'])
@@ -123,18 +116,7 @@ def search(version=DEFAULT_API_VERSION):
            endpoint='featured-fireplace')
 @app.route('/api/<version>/apps/recommend/', endpoint='apps-recommended')
 def category(version=DEFAULT_API_VERSION):
-    data = app._paginated('objects', app_generator)
-    data['collections'] = [
-        factory.collection('Collection', 'collection-0'),
-        factory.collection('Collection', 'collection-1'),
-    ]
-    data['featured'] = [
-        factory.collection('Featured', 'featured'),
-    ]
-    data['operator'] = [
-        factory.op_shelf(),
-    ]
-    return data
+    return app._paginated('objects', app_generator)
 
 
 @app.route('/api/<version>/apps/rating/', methods=['GET', 'POST'])
@@ -144,12 +126,12 @@ def app_ratings(version=DEFAULT_API_VERSION):
 
     slug = request.form.get('app') or request.args.get('app')
 
-    data = app._paginated('objects', ratings_generator)
+    data = app._paginated('objects', review_generator)
     data['info'] = {
         'slug': slug,
         'average': random.random() * 4 + 1,
     }
-    data.update(factory.rating_user_data(slug))
+    data.update(factory.review_user_data(slug))
     return data
 
 
@@ -159,7 +141,7 @@ def app_rating(version=DEFAULT_API_VERSION, id=None):
     if request.method in ('PUT', 'DELETE'):
         return {'error': False}
 
-    return factory.rating()
+    return factory.review()
 
 
 @app.route('/api/<version>/apps/rating/<id>/flag/', methods=['POST'])
@@ -169,7 +151,7 @@ def app_rating_flag(version=DEFAULT_API_VERSION, id=None):
 
 @app.route('/api/<version>/fireplace/app/<slug>/')
 def app_(version=DEFAULT_API_VERSION, slug=None):
-    return factory.app('Something something %s' % slug, slug)
+    return factory.app(slug=slug)
 
 
 @app.route('/api/<version>/installs/record/', methods=['POST'])
@@ -199,20 +181,12 @@ def consumer_info(version=DEFAULT_API_VERSION):
 
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
 def feed(version=DEFAULT_API_VERSION):
-    items = []
-    elms = itertools.cycle(['app', 'collection', 'brand'])
-
-    for i in xrange(NUMBER_OF_FEED_ITEMS):
-        items.append(factory.feed_item(item_type=elms.next()))
-
-    return {
-        'objects': items
-    }
+    return app._paginated('objects', None, 30, factory.feed())
 
 
 @app.route('/api/<version>/fireplace/feed/brands/<slug>/', methods=['GET'])
 def feed_brand(version=DEFAULT_API_VERSION, slug=''):
-    return factory.feed_brand()
+    return factory.brand()
 
 
 @app.route('/api/<version>/fireplace/feed/collections/<slug>/',
@@ -223,7 +197,7 @@ def feed_collection(version=DEFAULT_API_VERSION, slug=''):
 
 @app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
 def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
-    return factory.op_shelf()
+    return factory.shelf()
 
 
 @app.route('/api/<version>/account/newsletter/', methods=['POST'])

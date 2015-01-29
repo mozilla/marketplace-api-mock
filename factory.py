@@ -3,36 +3,24 @@ from cgi import escape
 from datetime import datetime, timedelta
 
 
+# XSS helpers.
 XSS = False
 
 xss_text = '"\'><script>alert("poop");</script><\'"'
-dummy_text = 'foo bar zip zap cvan fizz buzz something something'.split()
 
-
-def text(default):
+def _text(default):
     return xss_text if XSS else default
 
+dummy_text = 'foo bar zip zap cvan fizz buzz something something'.split()
 
-def ptext(len=10):
-    return text(' '.join(random.choice(dummy_text) for i in xrange(len)))
-
-
-def rand_bool():
-    return random.choice((True, False))
-
-
-def category(slug, name):
-    return {
-        'name': text(name),
-        'slug': slug,
-    }
+counter = 0
 
 AUTHORS = [
-    text('Lord Basta of the Iron Isles'),
-    text('Chris Van Halen'),
-    text('Kevin Ngo'),
-    text('Chuck Harmston'),
-    text('Davor van der Beergulpen')
+    _text('Lord Basta of the Iron Isles'),
+    _text('Chris Van Halen'),
+    _text('Ngo Way'),
+    _text('Huck Charmston'),
+    _text('Davor van der Beergulpen')
 ]
 
 CARRIERS = [
@@ -41,6 +29,24 @@ CARRIERS = [
     'o2',
     'telefonica',
     'deutsche_telekom',
+]
+
+COLLECTION_COLORS = {
+    'ruby': '#CE001C',
+    'amber': '#F78813',
+    'emerald': '#00953F',
+    'topaz': '#0099D0',
+    'sapphire': '#1E1E9C',
+    'amethyst': '#5A197E',
+    'garnet': '#A20D55',
+}.items()
+
+FEED_APP_TYPES = [
+    'icon',
+    'image',
+    'description',
+    'quote',
+    'preview'
 ]
 
 REGIONS = [
@@ -64,6 +70,8 @@ SCREENSHOT_MAP = [
     (118, 118204)
 ]
 
+SAMPLE_BG = '/media/img/logos/firefox-256.png'
+
 # Mapping between special app slug to their ids.
 SPECIAL_SLUGS_TO_IDS = {
     'installed': 414141,
@@ -71,28 +79,71 @@ SPECIAL_SLUGS_TO_IDS = {
     'purchased': 434343,
 }
 
-COLLECTION_COLORS = {
-    'ruby': '#CE001C',
-    'amber': '#F78813',
-    'emerald': '#00953F',
-    'topaz': '#0099D0',
-    'sapphire': '#1E1E9C',
-    'amethyst': '#5A197E',
-    'garnet': '#A20D55',
-}.items()
+USER_NAMES = ['Von Cvan', 'Lord Basta', 'Ser Davor', 'Queen Krupa',
+              'Le Ngoke']
 
-FEED_APP_TYPES = [
-    'icon',
-    'image',
-    'description',
-    'quote',
-    'preview'
-]
 
-SAMPLE_BG_IMAGE = '/media/img/logos/firefox-256.png'
+def _rand_text(len=10):
+    """Generate random string."""
+    return _text(' '.join(random.choice(dummy_text) for i in xrange(len)))
+
+
+def _app_preview():
+    """Generate app preview object."""
+    url = ('https://marketplace.cdn.mozilla.net/'
+           'img/uploads/previews/%%s/%d/%d.png' %
+           random.choice(SCREENSHOT_MAP))
+    return {
+        'caption': _rand_text(len=5),
+        'filetype': 'image/png',
+        'thumbnail_url': url % 'thumbs',
+        'image_url': url % 'full',
+    }
+
+
+def _rand_bool():
+    """Randomly returns True or False."""
+    return random.choice((True, False))
+
+
+def _carrier(**kw):
+    return {
+        'id': kw.get('id', 1),
+        'name': kw.get('name', 'Seavan Sellular'),
+        'resource_uri': kw.get('resource_uri',
+                                   '/api/v1/services/carrier/seavan_sellular/'),
+        'slug': random.choice(CARRIERS),
+    }
+
+
+def _category(slug, name):
+    """Creates a category object."""
+    return {
+        'name': _text(name),
+        'slug': slug,
+    }
+
+
+def _rand_datetime():
+    """Randomly returns a datetime within the last 600 days."""
+    rand_date = datetime.now() - timedelta(days=random.randint(0, 600))
+    return rand_date.strftime('%Y-%m-%dT%H:%M:%S')
+
+
+def _region(**kw):
+    return {
+        'id': kw.get('id', 1),
+        'name': kw.get('name', 'Appistan'),
+        'resource_uri': kw.get('resource_uri',
+                                   '/api/v1/services/region/ap/'),
+        'slug': random.choice(REGIONS),
+        'default_currency': kw.get('default_currency', 'USD'),
+        'default_language': kw.get('default_language', 'en-AP'),
+    }
 
 
 def _user_apps():
+    """Returns user's apps object."""
     return {
         'installed': [SPECIAL_SLUGS_TO_IDS['installed']],
         'developed': [SPECIAL_SLUGS_TO_IDS['developed']],
@@ -100,23 +151,18 @@ def _user_apps():
     }
 
 
-def _app_preview():
-    url = ('https://marketplace.cdn.mozilla.net/'
-           'img/uploads/previews/%%s/%d/%d.png' %
-               random.choice(SCREENSHOT_MAP))
-    return {
-        'caption': ptext(len=5),
-        'filetype': 'image/png',
-        'thumbnail_url': url % 'thumbs',
-        'image_url': url % 'full',
-    }
+def app(**kw):
+    """
+    In the API everything here except `user` should be serialized and keyed off
+    counter:region:locale.
+    """
+    global counter
+    counter += 1
 
+    slug = kw.get('slug', 'app-%d' % counter)
 
-def app(name, slug, **kwargs):
-    # In the API everything here except `user` should be serialized and
-    # keyed off app_id:region:locale.
     data = {
-        'id': SPECIAL_SLUGS_TO_IDS.get(slug, random.randint(1, 40000)),
+        'id': SPECIAL_SLUGS_TO_IDS.get(slug, counter),
         'author': random.choice(AUTHORS),
         'categories': ['social', 'games'],
         'content_ratings': {
@@ -125,36 +171,37 @@ def app(name, slug, **kwargs):
             'descriptors': ['scary', 'lang', 'drugs'],
             'interactives': ['users-interact', 'shares-info']
         },
-        'current_version': text('%d.0' % int(random.random() * 20)),
-        'description': {'en-US': escape(kwargs.get('description',
-                                                   ptext(100)))},
+        'current_version': _text('%d.0' % int(random.random() * 20)),
+        'description': {'en-US': escape(kw.get('description',
+                                                   _rand_text(100)))},
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
                          'android-tablet'],
+        'file_size': 12345,
         'homepage': 'http://marketplace.mozilla.org/',
         'icons': {
             64: '/media/img/logos/64.png'
         },
-        'is_packaged': slug == 'packaged' or rand_bool(),
+        'is_packaged': slug == 'packaged' or _rand_bool(),
         'manifest_url':
             'http://%s%s.testmanifest.com/manifest.webapp' %
-            (ptext(1), random.randint(1, 50000)),  # Minifest if packaged
-        'name': text(name),
+            (_rand_text(1), random.randint(1, 50000)),  # Minifest if packaged
+        'name': _text('App %d' % counter),
         'notices': random.choice(MESSAGES),
         'previews': [_app_preview() for i in range(4)],
-        'privacy_policy': kwargs.get('privacy_policy', ptext()),
+        'privacy_policy': kw.get('privacy_policy', _rand_text()),
         'public_stats': False,
         'slug': slug,
         'ratings': {
             'average': random.random() * 4 + 1,
             'count': int(random.random() * 500),
         },
-        'release_notes': kwargs.get('release_notes', ptext(100)),
-        'support_email': text('support@%s.com' % slug),
-        'support_url': text('support.%s.com' % slug),
+        'release_notes': kw.get('release_notes', _rand_text(100)),
+        'support_email': _text('support@%s.com' % slug),
+        'support_url': _text('support.%s.com' % slug),
         'upsell': False,
     }
 
-    has_price = rand_bool()
+    has_price = _rand_bool()
     price = '%.2f' % (random.random() * 10)
     if slug == 'free':
         has_price = False
@@ -165,7 +212,7 @@ def app(name, slug, **kwargs):
     if slug == 'upsell':
         data['upsell'] = {
             'id': random.randint(1, 10000),
-            'name': ptext(),
+            'name': _rand_text(),
             'icon_url': '/media/img/logos/firefox-256.png',
             'app_slug': 'upsold',
             'resource_uri': '/api/v1/fireplace/app/%s/' % 'upsold',
@@ -183,19 +230,19 @@ def app(name, slug, **kwargs):
 
     data.update(app_user_data(slug))
 
-    return data
+    return dict(data, **kw)
 
 
-def rating_user_data(slug=None):
+def review_user_data(slug=None):
     data = {
         'user': {
-            'has_rated': rand_bool(),
+            'has_rated': _rand_bool(),
             'can_rate': True,
         }
     }
     if data['user']['can_rate']:
         data['rating'] = random.randint(1, 5)
-        data['user']['has_rated'] = rand_bool()
+        data['user']['has_rated'] = _rand_bool()
 
     # Conditional slugs for great debugging.
     if slug == 'has_rated':
@@ -213,7 +260,7 @@ def rating_user_data(slug=None):
 def app_user_data(slug=None):
     data = {
         'user': {
-            'developed': rand_bool(),
+            'developed': _rand_bool(),
         }
     }
     # Conditional slugs for great debugging.
@@ -225,196 +272,222 @@ def app_user_data(slug=None):
     return data
 
 
-def app_user_review(slug, **kwargs):
+def app_user_review(slug, **kw):
     data = {
-        'body': kwargs.get('review', ptext()),
+        'body': kw.get('review', _rand_text()),
         'rating': 4
     }
     return data
 
 
-user_names = ['Cvan', 'Basta', 'Davor', 'Queen Krupa']
+def review():
+    global counter
+    counter += 1
 
-
-def rand_datetime():
-    rand_date = datetime.now() - timedelta(days=random.randint(0, 600))
-    return rand_date.strftime('%Y-%m-%dT%H:%M:%S')
-
-
-def rating():
     version = None
-    if random.choice((True, False)):
+    if _rand_bool():
         version = {
             'name': random.randint(1, 3),
             'latest': False,
         }
 
-    id_ = random.randint(1000, 9999)
     return {
-        'rating': 4,
-        'body': ptext(len=20),
-        'created': rand_datetime(),
+        'rating': random.randint(1, 5),
+        'body': _rand_text(len=20),
+        'created': _rand_datetime(),
         'is_flagged': random.randint(1, 5) == 1,
         'is_author': random.randint(1, 5) == 1,
-        'modified': rand_datetime(),
-        'report_spam': '/api/v1/apps/rating/%d/flag/' % id_,
-        'resource_uri': '/api/v1/apps/rating/%d/' % id_,
+        'modified': _rand_datetime(),
+        'report_spam': '/api/v1/apps/rating/%d/flag/' % counter,
+        'resource_uri': '/api/v1/apps/rating/%d/' % counter,
         'user': {
-            'display_name': text(random.choice(user_names)),
-            'id': random.randint(1000, 9999),
+            'display_name': _text(random.choice(USER_NAMES)),
+            'id': counter,
         },
         'version': version,
     }
 
 
-def collection(name, slug, num=6):
-    description = random.choice([ptext(len=20), ''])
-    collection_id = random.randint(1, 999)
+def feed_item(**kw):
+    global counter
+    counter += 1
 
+    return dict({
+        'app': feed_app(),
+        'brand': brand(),
+        'carrier': _carrier()['slug'],
+        'collection': collection(),
+        'id': counter,
+        'item_type': random.choice(['app', 'collection', 'brand']),
+        'url': '/api/v2/feed/items/%d/' % counter,
+        'region': _region()['slug'],
+        'shelf': shelf()
+    }, **kw)
+
+
+def feed_app(**kw):
+    pullquote_text = '"' + _rand_text(len=12) + '"'
+    description = random.choice([_rand_text(len=20), ''])
+    feedapp_type = random.choice(FEED_APP_TYPES)
     rand_color = random.choice(COLLECTION_COLORS)
 
-    data = {
-        'name': text(name),
-        'id': collection_id,
-        'slug': slug,
-        'app_count': num,
-        'type': 'listing',
-        'author': text('Basta Splasha'),
+    return dict({
+        'app': app(),
+        'background_color': rand_color[1],
+        'color': rand_color[0],
         'description': description,
-        'apps': [app('Featured App', 'creat%d' % i) for
-                 i in xrange(num)],
+        'type': FEED_APP_TYPES[0],
+        'background_image': SAMPLE_BG,
+        'id': counter,
+        'preview': preview(),
+        'pullquote_attribute': random.choice(AUTHORS),
+        'pullquote_rating': random.randint(1, 5),
+        'pullquote_text': pullquote_text,
+        'slug': 'feed-app-%d' % counter,
+        'url': '/api/v2/feed/apps/%d' % counter
+    }, **kw)
+
+
+def brand(**kw):
+    global counter
+    counter += 1
+
+    app_count = kw.get('app_count', 6)
+
+    return dict({
+        'app_count': app_count,
+        'apps': [app() for i in xrange(app_count)],
+        'id': counter,
+        'layout': random.choice(['list', 'grid']),
+        'slug': 'brand-%d' % counter,
+        'type': random.choice(['hidden-gem', 'music', 'travel']),
+        'url': '/api/v2/feed/brand%d' % counter
+    }, **kw)
+
+
+def collection(**kw):
+    global counter
+    counter += 1
+
+    slug = 'collection-%s' % counter
+    rand_color = random.choice(COLLECTION_COLORS)
+    app_count = kw.get('app_count', 6)
+
+    data = {
+        'name': _text('Collection %s' % counter),
+        'id': counter,
+        'slug': slug,
+        'app_count': app_count,
+        'type': 'listing',
+        'description': random.choice([_rand_text(len=20), '']),
+        'apps': [app() for i in xrange(app_count)],
         'background_color': rand_color[1],
         'color': rand_color[0],
         'icon': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                 'mkt-collection-logo.png',
-        'url': '/api/v2/feed/collections/%d/' % collection_id
+        'url': '/api/v2/feed/collections/%d/' % counter
     }
 
-    if random.randint(0, 1):
-        data['background_image'] = SAMPLE_BG_IMAGE,
+    if _rand_bool():
+        data['background_image'] = SAMPLE_BG,
         data['type'] = 'promo'
+
+    data = dict(data, **kw)
+
+    if data['slug'] == 'grouped':
+        # Divide into three groups for mega collections.
+        for i, _app in enumerate(data['apps']):
+            if i < data['app_count'] / 3:
+                _app['group'] = 'Group 1'
+            elif i < data['app_count'] * 2 / 3:
+                _app['group'] = 'Group 2'
+            else:
+                _app['group'] = 'Group 3'
+
     return data
 
 
-def region(**kwargs):
-    return {
-        'id': kwargs.get('id', 1),
-        'name': kwargs.get('name', 'Appistan'),
-        'resource_uri': kwargs.get('resource_uri',
-                                   '/api/v1/services/region/ap/'),
-        'slug': random.choice(REGIONS),
-        'default_currency': kwargs.get('default_currency', 'USD'),
-        'default_language': kwargs.get('default_language', 'en-AP'),
-    }
+def shelf(**kw):
+    global counter
+    counter += 1
 
-
-def carrier(**kwargs):
-    return {
-        'id': kwargs.get('id', 1),
-        'name': kwargs.get('name', 'Seavan Sellular'),
-        'resource_uri': kwargs.get('resource_uri',
-                                   '/api/v1/services/carrier/seavan_sellular/'),
-        'slug': random.choice(CARRIERS),
-    }
-
-
-def feed_item(item_type=None):
-    item_id = random.randint(1, 999)
-    coll = collection('some feed collection',
-                      'some_feed_collection_%d' % item_id,
-                      num=random.randint(2, 5))
-
-    return {
-        'app': feed_app(),
-        'brand': feed_brand(),
-        'carrier': carrier()['slug'],
-        'collection': coll,
-        'id': item_id,
-        'item_type': item_type or random.choice(['app', 'collection', 'brand']),
-        'url': '/api/v2/feed/items/%d/' % item_id,
-        'region': region()['slug'],
-        'shelf': op_shelf()
-    }
-
-
-def feed_app():
-    app_id = random.randint(1, 999)
-    pq_text = '"' + ptext(len=12) + '"'
-    description = random.choice([ptext(len=20), ''])
-    feedapp_type = random.choice(FEED_APP_TYPES)
-
-    rand_color = random.choice(COLLECTION_COLORS)
-
-    return {
-        'app': app('feed app %d' % app_id,
-                   'feed-app-%d' % app_id, description=xss_text),
-        'background_color': rand_color[1],
-        'color': rand_color[0],
-        'description': description,
-        'type': feedapp_type,
-        'background_image': SAMPLE_BG_IMAGE,
-        'id': app_id,
-        'preview': preview(),
-        'pullquote_attribute': random.choice(AUTHORS),
-        'pullquote_rating': random.randint(1, 5),
-        'pullquote_text': pq_text,
-        'slug': 'some-feed-app-%d' % app_id,
-        'url': '/api/v2/feed/apps/%d' % app_id
-    }
-
-
-def feed_brand(num=6):
-    bid = random.randint(1, 999)
-    layout = random.choice(['list', 'grid'])
-
-    # Full list at:
-    # https://github.com/mozilla/zamboni/blob/master/mkt/feed/constants.py
-    brand_type = random.choice(['hidden-gem', 'music', 'travel'])
-
-    return {
-        'apps': [app('Branded App', 'brand%d' % i) for
-                 i in xrange(num)],
-        'id': bid,
-        'layout': layout,
-        'slug': 'brand-%d' % bid,
-        'type': brand_type,
-        'url': '/api/v2/feed/brand%d' % bid
-    }
-
-
-def op_shelf(num=6):
-    _carrier = carrier()['slug']
-    shelf_id = random.randint(1, 999)
+    carrier = _carrier()['slug']
+    app_count = kw.get('app_count', 6)
 
     data = {
-        'apps': [app('Featured App', 'creat%d' % i) for
-                 i in xrange(num)],
-        'app_count': num,
-        'background_image': SAMPLE_BG_IMAGE,
-        'background_image_landing': SAMPLE_BG_IMAGE,
-        'carrier': _carrier,
-        'id': shelf_id,
-        'name': '%s Op Shelf' % _carrier.replace('_', ' ').capitalize(),
+        'apps': [app() for i in xrange(app_count)],
+        'app_count': app_count,
+        'background_image': SAMPLE_BG,
+        'background_image_landing': SAMPLE_BG,
+        'carrier': carrier,
+        'description': '',
+        'id': counter,
+        'name': '%s Op Shelf' % carrier.replace('_', ' ').capitalize(),
         'region': 'restofworld',
-        'slug': 'sample-op-shelf',
-        'url': '/api/v2/feed/shelves/%d/' % shelf_id
+        'slug': 'shelf-%d' % counter,
+        'url': '/api/v2/feed/shelves/%d/' % counter
     }
 
-    if random.randint(0, 1):
-        data['description'] = '<script>alert("LOL");</script> Description'
+    return dict(data, **kw)
+
+
+def feed():
+    """
+    Generates a Feed, with at least one of every type of Feed module.
+    """
+    data = [
+        feed_item(item_type='shelf', shelf=shelf(name='Shelf')),
+        feed_item(item_type='shelf', shelf=shelf(description=_rand_text(),
+                                                 name='Shelf Description')),
+        feed_item(item_type='brand', brand=brand(layout='grid')),
+        feed_item(item_type='brand', brand=brand(layout='list')),
+        feed_item(item_type='collection',
+                  collection=collection(type='promo',
+                                        background=SAMPLE_BG,
+                                        description=_rand_text(),
+                                        slug='grouped',
+                                        name='Mega Collection')),
+        feed_item(item_type='collection',
+                  collection=collection(type='promo',
+                                        name='Coll Promo')),
+        feed_item(item_type='collection',
+                  collection=collection(type='promo',
+                                        description=_rand_text(),
+                                        name='Coll Desc')),
+        feed_item(item_type='collection',
+                  collection=collection(type='promo',
+                                        background=SAMPLE_BG,
+                                        name='Coll Promo Background')),
+        feed_item(item_type='collection',
+                  collection=collection(type='promo',
+                                        description=_rand_text(),
+                                        name='Coll Promo Background Desc')),
+        feed_item(item_type='collection',
+                  collection=collection(type='listing',
+                                        name='Coll Listing')),
+        feed_item(item_type='collection',
+                  collection=collection(type='listing',
+                                        description=_rand_text(),
+                                        name='Coll Listing Desc')),
+    ]
+
+    for feed_app_type in FEED_APP_TYPES:
+        data.append(feed_item(item_type='app',
+                              app=feed_app(type=feed_app_type)))
 
     return data
 
 
 def preview():
-    pid = random.randint(1, 999)
+    global counter
+    counter += 1
 
     return {
-        'id': pid,
+        'id': counter,
         'position': 1,
         'thumbnail_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                          'mkt-collection-logo.png',
-        'image_url': SAMPLE_BG_IMAGE,
+        'image_url': SAMPLE_BG,
         'filetype': 'image/png',
-        'resource_uri': 'pi/v1/apps/preview/%d' % pid
+        'resource_uri': 'pi/v1/apps/preview/%d' % counter
     }
