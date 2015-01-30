@@ -2,6 +2,10 @@ import random
 from cgi import escape
 from datetime import datetime, timedelta
 
+from mpconstants.collection_colors import COLLECTION_COLORS
+
+COLLECTION_COLORS = COLLECTION_COLORS.items()
+
 
 # XSS helpers.
 XSS = False
@@ -30,16 +34,6 @@ CARRIERS = [
     'telefonica',
     'deutsche_telekom',
 ]
-
-COLLECTION_COLORS = {
-    'ruby': '#CE001C',
-    'amber': '#F78813',
-    'emerald': '#00953F',
-    'topaz': '#0099D0',
-    'sapphire': '#1E1E9C',
-    'amethyst': '#5A197E',
-    'garnet': '#A20D55',
-}.items()
 
 FEED_APP_TYPES = [
     'icon',
