@@ -82,3 +82,20 @@ Create services to bind to 'flue' ?  [yN]: N
 ```
 
 Enter `N` (or hit enter) to proceed.
+
+## Additional API
+
+To facilitate testing, some slugs will tell the mock API to return
+specially-altered objects.
+
+- ```/app/developed/``` returns an app that the user is the developer of
+- ```/app/free/``` returns a free app
+- ```/app/packaged/``` returns a packaged app
+- ```/app/paid/``` returns a premium app
+- ```/app/upsell/``` returns an app with upsell information
+- ```/apps/rating/can_rate/``` returns reviews with metadata that states the
+  user is authorized to review the app
+- ```/apps/rating/cant_rate/``` returns reviews with metadata that states the
+  user is *not* authorized to review the app
+- ```/apps/rating/has_rated/``` returns reviews with metadata that states the
+  user has previously reviewed the app
