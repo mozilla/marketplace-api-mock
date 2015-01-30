@@ -442,8 +442,10 @@ def feed():
         feed_item(item_type='shelf', shelf=shelf(name='Shelf')),
         feed_item(item_type='shelf', shelf=shelf(description=_rand_text(),
                                                  name='Shelf Description')),
-        feed_item(item_type='brand', brand=brand(layout='grid')),
-        feed_item(item_type='brand', brand=brand(layout='list')),
+        feed_item(item_type='brand', brand=brand(layout='grid',
+                                                 slug='brand-grid')),
+        feed_item(item_type='brand', brand=brand(layout='list',
+                                                 slug='brand-list')),
         feed_item(item_type='collection',
                   collection=collection(type='promo',
                                         slug='grouped',
@@ -482,7 +484,8 @@ def feed():
 
     for feed_app_type in FEED_APP_TYPES:
         data.append(feed_item(item_type='app',
-                              app=feed_app(type=feed_app_type)))
+                              app=feed_app(type=feed_app_type,
+                                           slug='feedapp-%s' % feed_app_type)))
 
     return data
 
