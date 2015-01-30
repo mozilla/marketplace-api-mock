@@ -80,20 +80,6 @@ def privacy(version=DEFAULT_API_VERSION, slug=''):
     }
 
 
-@app.route('/api/<version>/apps/category/')
-def categories(version=DEFAULT_API_VERSION):
-    return {
-        'objects': [
-            factory.category('shopping', 'Shopping'),
-            factory.category('games', 'Games'),
-            factory.category('productivity', 'Productivity'),
-            factory.category('social', 'Social'),
-            factory.category('music', 'Music'),
-            factory.category('lifestyle', 'Thug Life'),
-        ]
-    }
-
-
 @app.route('/api/<version>/account/installed/mine/')
 def installed(version=DEFAULT_API_VERSION):
     query = request.args.get('q')

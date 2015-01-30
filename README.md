@@ -52,6 +52,11 @@ response.
 If you are generating a mock object, a good place to add that would be in
 factory.py
 
+### Throttling
+
+If you wish to throttle the server to test something, an easy way is to put
+a ```time.sleep(X)``` into the view in ```main.py```.
+
 
 ## Deploying an Update
 
