@@ -50,7 +50,7 @@ To add an endpoint, look into ```main.py``` to add a view that returns a
 response.
 
 If you are generating a mock object, a good place to add that would be in
-```factory.py```.
+factory.py
 
 
 ## Deploying an Update
