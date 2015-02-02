@@ -46,10 +46,12 @@ arguments.
 
 ## Developing
 
-To add an endpoint, look into ```main.py``` to add a view that returns a
-response.
+Development tips and guidelines:
 
-If you are generating a mock object, a good place to add that would be in
+- Since our tests depend on the mock API, keep geenrated results predictable as to not have intermittent test failures.
+- To add an endpoint, look into ```main.py``` to add a view that returns a
+response.
+- If you are generating a mock object, a good place to add that would be in
 factory.py
 
 ### Throttling

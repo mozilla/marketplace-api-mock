@@ -118,6 +118,11 @@ def app_ratings(version=DEFAULT_API_VERSION):
         'average': random.random() * 4 + 1,
     }
     data.update(factory.review_user_data(slug))
+
+    if slug == 'has_rated':
+        data['objects'][0]['is_author'] = True
+        data['objects'][0]['is_flagged'] = False
+
     return data
 
 
