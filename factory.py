@@ -230,7 +230,7 @@ def app(**kw):
 def review_user_data(slug=None):
     data = {
         'user': {
-            'has_rated': _rand_bool(),
+            'has_rated': False,
             'can_rate': True,
         }
     }
