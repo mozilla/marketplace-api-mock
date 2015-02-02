@@ -252,7 +252,7 @@ def review_user_data(slug=None):
     }
     if data['user']['can_rate']:
         data['rating'] = random.randint(1, 5)
-        data['user']['has_rated'] = _rand_bool()
+        data['user']['has_rated'] = False
 
     # Conditional slugs for great debugging.
     if slug == 'has_rated':
