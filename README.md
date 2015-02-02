@@ -48,7 +48,8 @@ arguments.
 
 Development tips and guidelines:
 
-- Since our tests depend on the mock API, keep geenrated results predictable as to not have intermittent test failures.
+- Since our tests depend on the mock API, keep geenrated results predictable
+  as to not have intermittent test failures.
 - To add an endpoint, look into ```main.py``` to add a view that returns a
 response.
 - If you are generating a mock object, a good place to add that would be in
@@ -93,7 +94,7 @@ Enter `N` (or hit enter) to proceed.
 ## Additional API
 
 To facilitate testing, some slugs will tell the mock API to return
-specially-altered objects.
+specially-altered objects that have some explicitly defined results.
 
 - ```/app/developed/``` returns an app that the user is the developer of
 - ```/app/free/``` returns a free app

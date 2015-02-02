@@ -1,4 +1,5 @@
 import random
+import string
 from cgi import escape
 from datetime import datetime, timedelta
 
@@ -41,6 +42,18 @@ FEED_APP_TYPES = [
     'description',
     'quote',
     'preview'
+]
+
+# App slugs that return special data.
+KEYWORD_APP_SLUGS = [
+    'can_rate',
+    'cant_rate',
+    'developed',
+    'free',
+    'has_rated',
+    'packaged',
+    'paid',
+    'upsell',
 ]
 
 REGIONS = [
@@ -221,6 +234,9 @@ def app(**kw):
 
     if slug == 'packaged':
         data['current_version'] = '1.0'
+
+    if slug in KEYWORD_APP_SLUGS:
+        data['name'] = string.capwords(slug.replace('_', ' '))
 
     data.update(app_user_data(slug))
 
