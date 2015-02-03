@@ -126,7 +126,7 @@ def collection(**kw):
         # Divide into three groups for mega collections.
         data.update({
             'background_image': SAMPLE_BG,
-            'description': rand_text(),
+            'description': rand_text(n=100),
             'name': 'Mega Collection',
             'type': 'promo'
         })
@@ -144,20 +144,22 @@ def collection(**kw):
         })
     elif data['slug'] == 'coll-promo-desc':
         data.update({
-            'description': rand_text(),
+            'background_image': '',
+            'description': rand_text(n=100),
             'name': 'Coll Promo Desc',
             'type': 'promo',
         })
     elif data['slug'] == 'coll-promo-bg':
         data.update({
             'background_image': SAMPLE_BG,
+            'description': '',
             'name': 'Coll Promo Background',
             'type': 'promo',
         })
     elif data['slug'] == 'coll-promo-bg-desc':
         data.update({
             'background_image': SAMPLE_BG,
-            'description': rand_text(),
+            'description': rand_text(n=100),
             'name': 'Coll Promo Background Desc',
             'type': 'promo',
         })
@@ -168,7 +170,7 @@ def collection(**kw):
         })
     elif data['slug'] == 'coll-listing-desc':
         data.update({
-            'description': rand_text(),
+            'description': rand_text(n=100),
             'name': 'Coll Listing Desc',
             'type': 'listing',
         })
