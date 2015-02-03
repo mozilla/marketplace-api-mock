@@ -53,7 +53,7 @@ Development tips and guidelines:
 - To add an endpoint, look into ```main.py``` to add a view that returns a
 response.
 - If you are generating a mock object, a good place to add that would be in
-factory.py
+factory/__init__.py
 
 ### Throttling
 
@@ -107,3 +107,19 @@ specially-altered objects that have some explicitly defined results.
   user is *not* authorized to review the app
 - ```/apps/rating/has_rated/``` returns reviews with metadata that states the
   user has previously reviewed the app
+- ```/feed/shelf/shelf``` returns a shelf with the name Shelf
+- ```/feed/shelf/shelf-desc``` returns a shelf with description
+- ```/feed/brand/brand-grid``` returns a brand with grid layout
+- ```/feed/brand/brand-listing``` returns a brand with listing layout
+- ```/feed/collection/grouped``` returns promo collection of collections with
+  background and description
+- ```/feed/collection/coll-promo``` returns a promo collection
+- ```/feed/collection/coll-promo-desc``` returns a promo collection with a
+  description
+- ```/feed/collection/coll-promo-bg``` returns a promo collection with a
+  background image
+- ```/feed/collection/coll-promo-bg-desc``` returns a promo collection with a
+  background image and description
+- ```/feed/collection/coll-listing``` returns a listing collection
+- ```/feed/collection/coll-listing-desc``` returns a listing collection with a
+  description

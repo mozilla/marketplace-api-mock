@@ -13,6 +13,7 @@ from flask import make_response, request
 import app
 
 import factory
+from factory import feed as feed_factory
 
 
 DEFAULT_API_VERSION = 'v1'
@@ -76,7 +77,7 @@ def feedback(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/apps/app/<slug>/privacy/', methods=['GET'])
 def privacy(version=DEFAULT_API_VERSION, slug=''):
     return {
-        'privacy_policy': factory.ptext(),
+        'privacy_policy': factory.rand_text(),
     }
 
 
@@ -172,23 +173,23 @@ def consumer_info(version=DEFAULT_API_VERSION):
 
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
 def feed(version=DEFAULT_API_VERSION):
-    return app._paginated('objects', None, 30, factory.feed())
+    return app._paginated('objects', None, 30, feed_factory.feed())
 
 
 @app.route('/api/<version>/fireplace/feed/brands/<slug>/', methods=['GET'])
 def feed_brand(version=DEFAULT_API_VERSION, slug=''):
-    return factory.brand()
+    return feed_factory.brand(slug=slug)
 
 
 @app.route('/api/<version>/fireplace/feed/collections/<slug>/',
            methods=['GET'])
 def feed_collection(version=DEFAULT_API_VERSION, slug=''):
-    return factory.collection(name='slug', slug=slug)
+    return feed_factory.collection(name='slug', slug=slug)
 
 
 @app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
 def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
-    return factory.shelf()
+    return feed_factory.shelf(slug=slug)
 
 
 @app.route('/api/<version>/account/newsletter/', methods=['POST'])
@@ -197,4 +198,4 @@ def newsletter(version=DEFAULT_API_VERSION, id=None):
 
 
 if __name__ == '__main__':
-    app.run()
+   app.run()
