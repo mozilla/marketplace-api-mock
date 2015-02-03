@@ -4,7 +4,6 @@ Pointing your instance of Fireplace using settings.js will allow you to
 quickly get up and running without needing your own installation of Zamboni
 or without needing to use -dev (offline mode).
 """
-import itertools
 import json
 import random
 
@@ -14,6 +13,7 @@ import app
 
 import factory
 from factory import feed as feed_factory
+from factory import langpack as langpack_factory
 
 
 DEFAULT_API_VERSION = 'v1'
@@ -22,6 +22,11 @@ DEFAULT_API_VERSION = 'v1'
 def app_generator():
     while True:
         yield factory.app()
+
+
+def langpack_generator():
+    while True:
+        yield langpack_factory.langpack(url_root=request.url_root)
 
 
 def review_generator():
@@ -92,7 +97,6 @@ def installed(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/fireplace/search/', endpoint='search-fireplace')
 @app.route('/api/<version>/apps/search/')
 def search(version=DEFAULT_API_VERSION):
-    offset = int(request.args.get('offset', 0))
     query = request.args.get('q')
     data = app._paginated('objects', app_generator,
                           0 if query == 'empty' else 42)
@@ -104,6 +108,14 @@ def search(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/apps/recommend/', endpoint='apps-recommended')
 def category(version=DEFAULT_API_VERSION):
     return app._paginated('objects', app_generator)
+
+
+@app.route('/api/v2/langpacks/', endpoint='langpacks')
+def langpacks():
+    fxos_version = request.args.get('fxos_version')
+    return app._paginated('objects',
+                          langpack_generator,
+                          0 if fxos_version == 'empty' else 42)
 
 
 @app.route('/api/<version>/apps/rating/', methods=['GET', 'POST'])
