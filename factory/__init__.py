@@ -116,13 +116,17 @@ def app(**kw):
 
     has_price = rand_bool()
     price = '%.2f' % (random.random() * 10)
+
+    data.update(app_user_data(slug))
+    data = dict(data, **kw)
+
+    # Special apps.
     if slug == 'free':
         has_price = False
     elif slug == 'paid':
         has_price = True
         price = '0.99'
-
-    if slug == 'upsell':
+    elif slug == 'upsell':
         data['upsell'] = {
             'id': random.randint(1, 10000),
             'name': rand_text(),
@@ -130,23 +134,25 @@ def app(**kw):
             'app_slug': 'upsold',
             'resource_uri': '/api/v1/fireplace/app/%s/' % 'upsold',
         }
+    elif slug == 'packaged':
+        data['current_version'] = '1.0'
+    elif slug == 'unrated':
+        data['ratings'] = {
+            'average': 0,
+            'count': 0,
+        }
 
+    # Price stuff.
     if has_price:
         data.update(price=price, price_locale='$%s' % price)
     else:
         data.update(price=None, price_locale='$0.00')
-
     data['payment_required'] = has_price
-
-    if slug == 'packaged':
-        data['current_version'] = '1.0'
 
     if slug in SPECIAL_APP_SLUGS:
         data['name'] = string.capwords(slug.replace('_', ' '))
 
-    data.update(app_user_data(slug))
-
-    return dict(data, **kw)
+    return data
 
 
 def review_user_data(slug=None):

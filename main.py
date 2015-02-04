@@ -113,6 +113,18 @@ def app_ratings(version=DEFAULT_API_VERSION):
 
     slug = request.form.get('app') or request.args.get('app')
 
+    if slug == 'unrated':
+        return {
+            'average': 0,
+            'info': slug,
+            'meta': {
+                'next': None,
+                'prev': None,
+                'total_count': 0,
+            },
+            'objects': [],
+        }
+
     data = app._paginated('objects', review_generator)
     data['info'] = {
         'slug': slug,

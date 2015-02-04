@@ -106,7 +106,7 @@ specially-altered objects that have some explicitly defined results.
 - ```/apps/rating/cant_rate/``` returns reviews with metadata that states the
   user is *not* authorized to review the app
 - ```/apps/rating/has_rated/``` returns reviews with metadata that states the
-  user has previously reviewed the app
+- ```/apps/rating/unrated/``` returns empty set of reviews
 - ```/feed/shelf/shelf``` returns a shelf with the name Shelf
 - ```/feed/shelf/shelf-desc``` returns a shelf with description
 - ```/feed/brand/brand-grid``` returns a brand with grid layout

@@ -49,6 +49,7 @@ SPECIAL_APP_SLUGS = [
     'has_rated',
     'packaged',
     'paid',
+    'unrated',
     'upsell',
 ]
 
