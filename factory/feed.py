@@ -107,7 +107,7 @@ def collection(**kw):
         'slug': slug,
         'app_count': app_count,
         'type': 'listing',
-        'description': random.choice([rand_text(n=20), '']),
+        'description': '',
         'apps': [app() for i in xrange(app_count)],
         'background_color': rand_color[1],
         'color': rand_color[0],
