@@ -17,7 +17,7 @@ LATENCY = 0
 PER_PAGE = 25
 Response.default_mimetype = 'application/json'
 
-app = Flask('Flue')
+app = Flask('Flue', static_url_path='/fireplace')
 
 
 def _paginated(field, generator, result_count=42, objects=None):
@@ -66,13 +66,13 @@ ar = app.route
 
 
 def inject_cors_headers(response, methods=None):
-    if methods is None:
-        methods = [request.method]
-    methods.append('OPTIONS')
+    allow_methods = set([request.method] if methods is None else methods)
+    allow_methods.add('OPTIONS')
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = ','.join(methods)
+    response.headers['Access-Control-Allow-Methods'] = ','.join(allow_methods)
     response.headers['Access-Control-Allow-Headers'] = (
         'API-Filter, X-HTTP-METHOD-OVERRIDE')
+
 
 @wraps(ar)
 def route(*args, **kwargs):

@@ -221,5 +221,10 @@ def newsletter(version=DEFAULT_API_VERSION, id=None):
     return make_response('', 204)
 
 
+@app.route('/api/<version>/services/config/site/')
+def site_config(version=DEFAULT_API_VERSION):
+    return {'waffle': {}}
+
+
 if __name__ == '__main__':
-   app.run()
+    app.run()
