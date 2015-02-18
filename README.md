@@ -97,7 +97,6 @@ To facilitate testing, some slugs will tell the mock API to return
 specially-altered objects that have some explicitly defined results.
 
 - ```/app/developed/``` returns an app that the user is the developer of
-- ```/app/free/``` returns a free app
 - ```/app/packaged/``` returns a packaged app
 - ```/app/paid/``` returns a premium app
 - ```/app/upsell/``` returns an app with upsell information

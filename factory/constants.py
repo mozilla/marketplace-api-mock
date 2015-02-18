@@ -45,7 +45,6 @@ SPECIAL_APP_SLUGS = [
     'can_rate',
     'cant_rate',
     'developed',
-    'free',
     'has_rated',
     'packaged',
     'paid',
@@ -55,6 +54,7 @@ SPECIAL_APP_SLUGS = [
 
 # Mapping between special app slug to their ids.
 SPECIAL_SLUGS_TO_IDS = {
+    'free': 1,
     'installed': 414141,
     'developed': 424242,
     'purchased': 434343,

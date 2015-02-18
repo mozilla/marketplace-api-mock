@@ -96,11 +96,14 @@ def app(**kw):
         },
         'is_packaged': slug == 'packaged' or rand_bool(),
         'manifest_url':
-            'http://%s%s.testmanifest.com/manifest.webapp' %
-            (rand_text(1), random.randint(1, 50000)),  # Minifest if packaged
+            # Minifest if packaged
+            'http://%s.testmanifest.com/manifest.webapp' % slug,
         'name': text('App %d' % counter),
         'notices': random.choice(MESSAGES),
+        'premium_type': 'free',
         'previews': [_app_preview() for i in range(4)],
+        'price': None,
+        'price_locale': '$0.00',
         'privacy_policy': kw.get('privacy_policy', rand_text()),
         'public_stats': False,
         'slug': slug,
@@ -114,18 +117,16 @@ def app(**kw):
         'upsell': False,
     }
 
-    has_price = rand_bool()
-    price = '%.2f' % (random.random() * 10)
-
     data.update(app_user_data(slug))
     data = dict(data, **kw)
 
     # Special apps.
-    if slug == 'free':
-        has_price = False
-    elif slug == 'paid':
-        has_price = True
-        price = '0.99'
+    if slug == 'paid':
+        data.update(
+            price=3.50,
+            price_locale='$3.50',
+            payment_required=True
+        )
     elif slug == 'upsell':
         data['upsell'] = {
             'id': random.randint(1, 10000),
@@ -141,13 +142,6 @@ def app(**kw):
             'average': 0,
             'count': 0,
         }
-
-    # Price stuff.
-    if has_price:
-        data.update(price=price, price_locale='$%s' % price)
-    else:
-        data.update(price=None, price_locale='$0.00')
-    data['payment_required'] = has_price
 
     if slug in SPECIAL_APP_SLUGS:
         data['name'] = string.capwords(slug.replace('_', ' '))
