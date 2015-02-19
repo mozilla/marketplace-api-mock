@@ -95,6 +95,7 @@ def app(**kw):
             64: '/media/img/logos/64.png'
         },
         'is_packaged': slug == 'packaged' or rand_bool(),
+        'last_updated': rand_datetime(),
         'manifest_url':
             # Minifest if packaged
             'http://%s.testmanifest.com/manifest.webapp' % slug,
