@@ -20,7 +20,7 @@ Response.default_mimetype = 'application/json'
 app = Flask('Flue', static_url_path='/fireplace')
 
 
-def _paginated(field, generator, result_count=42, objects=None):
+def _paginated(field, generator, result_count=42, objects=None, **kw):
     per_page = int(request.args.get('limit', PER_PAGE))
     page = int(request.args.get('offset', 0)) / per_page
     if page * per_page > result_count:
@@ -30,7 +30,7 @@ def _paginated(field, generator, result_count=42, objects=None):
     else:
         items = [gen for i, gen in
                  zip(xrange(min(per_page, result_count - page * per_page)),
-                     generator())]
+                     generator(**kw))]
 
     next_page = None
     if (page + 1) * per_page <= result_count:

@@ -29,9 +29,9 @@ def langpack_generator():
         yield langpack_factory.langpack(url_root=request.url_root)
 
 
-def review_generator():
+def review_generator(**kw):
     while True:
-        yield factory.review()
+        yield factory.review(**kw)
 
 
 @app.route('/api/<version>/account/login/', methods=['POST'])
@@ -127,8 +127,10 @@ def app_ratings(version=DEFAULT_API_VERSION):
 
     if slug == 'unrated':
         return {
-            'average': 0,
-            'info': slug,
+            'info': {
+                'average': 0,
+                'slug': slug,
+            },
             'meta': {
                 'next': None,
                 'prev': None,
@@ -137,16 +139,16 @@ def app_ratings(version=DEFAULT_API_VERSION):
             'objects': [],
         }
 
-    data = app._paginated('objects', review_generator)
+    data = app._paginated('objects', review_generator, slug=slug)
     data['info'] = {
-        'slug': slug,
         'average': random.random() * 4 + 1,
+        'slug': slug,
     }
     data.update(factory.review_user_data(slug))
 
     if slug == 'has_rated':
+        data['objects'][0]['has_flagged'] = False
         data['objects'][0]['is_author'] = True
-        data['objects'][0]['is_flagged'] = False
 
     return data
 

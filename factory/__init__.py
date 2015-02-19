@@ -196,7 +196,7 @@ def app_user_review(slug, **kw):
     return data
 
 
-def review(**kw):
+def review(slug=None, **kw):
     global counter
     counter += 1
 
@@ -207,11 +207,11 @@ def review(**kw):
             'latest': False,
         }
 
-    return dict({
+    data = dict({
         'rating': random.randint(1, 5),
         'body': rand_text(n=20),
         'created': rand_datetime(),
-        'is_flagged': False,
+        'has_flagged': False,
         'is_author': False,
         'modified': rand_datetime(),
         'report_spam': '/api/v1/apps/rating/%d/flag/' % counter,
@@ -222,6 +222,11 @@ def review(**kw):
         },
         'version': version,
     }, **kw)
+
+    if slug == 'has_flagged':
+        data['has_flagged'] = True
+
+    return data
 
 
 def preview():

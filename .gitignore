@@ -2,7 +2,7 @@
 *.pyc
 tags
 TAGS
-*.swp
+*.sw[pon]
 *.egg-info
 .emacs.desktop
 .#*
