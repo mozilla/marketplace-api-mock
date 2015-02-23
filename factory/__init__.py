@@ -143,6 +143,10 @@ def app(**kw):
             'average': 0,
             'count': 0,
         }
+    elif slug == 'tracking':
+        data['id'] = 1234
+        data['author'] = 'Tracking'
+        data['name'] = 'Tracking'
 
     if slug in SPECIAL_APP_SLUGS:
         data['name'] = string.capwords(slug.replace('_', ' '))

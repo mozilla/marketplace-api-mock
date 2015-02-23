@@ -99,6 +99,8 @@ specially-altered objects that have some explicitly defined results.
 - ```/app/developed/``` returns an app that the user is the developer of
 - ```/app/packaged/``` returns a packaged app
 - ```/app/paid/``` returns a premium app
+- ```/app/tracking/``` returns an app with predictable fields for testing UA
+    tracking
 - ```/app/upsell/``` returns an app with upsell information
 - ```/apps/rating/can_rate/``` returns reviews with metadata that states the
   user is authorized to review the app
