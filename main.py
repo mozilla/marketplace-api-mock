@@ -5,7 +5,11 @@ quickly get up and running without needing your own installation of Zamboni
 or without needing to use -dev (offline mode).
 """
 import json
+import os
 import random
+import sys
+import traceback
+from optparse import OptionParser
 
 from flask import make_response, request
 
@@ -34,7 +38,7 @@ def review_generator(**kw):
         yield factory.review(**kw)
 
 
-@app.route('/api/<version>/account/login/', methods=['POST'])
+@app.route_as_json('/api/<version>/account/login/', methods=['POST'])
 def login(version=DEFAULT_API_VERSION):
     """TODO: update for FxA."""
     return {
@@ -51,12 +55,13 @@ def login(version=DEFAULT_API_VERSION):
     }
 
 
-@app.route('/api/<version>/account/logout/', methods=['DELETE'])
+@app.route_as_json('/api/<version>/account/logout/', methods=['DELETE'])
 def logout(version=DEFAULT_API_VERSION):
-    return ''
+    return {}
 
 
-@app.route('/api/<version>/account/settings/mine/', methods=['GET', 'PATCH'])
+@app.route_as_json('/api/<version>/account/settings/mine/',
+                   methods=['GET', 'PATCH'])
 def settings(version=DEFAULT_API_VERSION):
     return {
         'display_name': 'Joe User',
@@ -65,28 +70,28 @@ def settings(version=DEFAULT_API_VERSION):
     }
 
 
-@app.route('/api/<version>/abuse/app/', methods=['POST'])
+@app.route_as_json('/api/<version>/abuse/app/', methods=['POST'])
 def app_abuse(version=DEFAULT_API_VERSION):
     if not request.form.get('text'):
         return {'error': True}
     return {'error': False}
 
 
-@app.route('/api/<version>/account/feedback/', methods=['POST'])
+@app.route_as_json('/api/<version>/account/feedback/', methods=['POST'])
 def feedback(version=DEFAULT_API_VERSION):
     if not request.form.get('feedback'):
         return {'error': True}
     return {'error': False}
 
 
-@app.route('/api/<version>/apps/app/<slug>/privacy/', methods=['GET'])
+@app.route_as_json('/api/<version>/apps/app/<slug>/privacy/', methods=['GET'])
 def privacy(version=DEFAULT_API_VERSION, slug=''):
     return {
         'privacy_policy': factory.rand_text(),
     }
 
 
-@app.route('/api/<version>/account/installed/mine/')
+@app.route_as_json('/api/<version>/account/installed/mine/')
 def installed(version=DEFAULT_API_VERSION):
     query = request.args.get('q')
     data = app._paginated('objects', app_generator,
@@ -94,8 +99,8 @@ def installed(version=DEFAULT_API_VERSION):
     return data
 
 
-@app.route('/api/<version>/fireplace/search/', endpoint='search-fireplace')
-@app.route('/api/<version>/apps/search/')
+@app.app.route('/api/<version>/fireplace/search/', endpoint='search-fireplace')
+@app.route_as_json('/api/<version>/apps/search/')
 def search(version=DEFAULT_API_VERSION):
     query = request.args.get('q', '')
 
@@ -109,14 +114,15 @@ def search(version=DEFAULT_API_VERSION):
     return data
 
 
-@app.route('/api/<version>/fireplace/search/featured/',
-           endpoint='featured-fireplace')
-@app.route('/api/<version>/apps/recommend/', endpoint='apps-recommended')
+@app.app.route('/api/<version>/fireplace/search/featured/',
+               endpoint='featured-fireplace')
+@app.route_as_json('/api/<version>/apps/recommend/',
+                   endpoint='apps-recommended')
 def category(version=DEFAULT_API_VERSION):
     return app._paginated('objects', app_generator)
 
 
-@app.route('/api/v2/langpacks/', endpoint='langpacks')
+@app.route_as_json('/api/v2/langpacks/', endpoint='langpacks')
 def langpacks():
     fxos_version = request.args.get('fxos_version')
     return app._paginated('objects',
@@ -124,7 +130,7 @@ def langpacks():
                           0 if fxos_version == 'empty' else 42)
 
 
-@app.route('/api/<version>/apps/rating/', methods=['GET', 'POST'])
+@app.route_as_json('/api/<version>/apps/rating/', methods=['GET', 'POST'])
 def app_ratings(version=DEFAULT_API_VERSION):
     if request.method == 'POST':
         return {'error': False}
@@ -165,8 +171,8 @@ def app_ratings(version=DEFAULT_API_VERSION):
     return data
 
 
-@app.route('/api/<version>/apps/rating/<id>/',
-           methods=['GET', 'PUT', 'DELETE'])
+@app.route_as_json('/api/<version>/apps/rating/<id>/',
+                   methods=['GET', 'PUT', 'DELETE'])
 def app_rating(version=DEFAULT_API_VERSION, id=None):
     if request.method in ('PUT', 'DELETE'):
         return {'error': False}
@@ -174,32 +180,32 @@ def app_rating(version=DEFAULT_API_VERSION, id=None):
     return factory.review()
 
 
-@app.route('/api/<version>/apps/rating/<id>/flag/', methods=['POST'])
+@app.route_as_json('/api/<version>/apps/rating/<id>/flag/', methods=['POST'])
 def app_rating_flag(version=DEFAULT_API_VERSION, id=None):
-    return ''
+    return {}
 
 
-@app.route('/api/<version>/fireplace/app/<slug>/')
+@app.route_as_json('/api/<version>/fireplace/app/<slug>/')
 def app_(version=DEFAULT_API_VERSION, slug=None):
     return factory.app(slug=slug)
 
 
-@app.route('/api/<version>/installs/record/', methods=['POST'])
+@app.route_as_json('/api/<version>/installs/record/', methods=['POST'])
 def record_free(version=DEFAULT_API_VERSION):
     return {'error': False}
 
 
-@app.route('/api/<version>/receipts/install/', methods=['POST'])
+@app.route_as_json('/api/<version>/receipts/install/', methods=['POST'])
 def record_paid(version=DEFAULT_API_VERSION):
     return {'error': False}
 
 
-@app.route('/api/<version>/apps/<id>/statistics/', methods=['GET'])
+@app.route_as_json('/api/<version>/apps/<id>/statistics/', methods=['GET'])
 def app_stats(version=DEFAULT_API_VERSION, id=None):
     return json.loads(open('./fixtures/3serieschart.json', 'r').read())
 
 
-@app.route('/api/<version>/fireplace/consumer-info/', methods=['GET'])
+@app.route_as_json('/api/<version>/fireplace/consumer-info/', methods=['GET'])
 def consumer_info(version=DEFAULT_API_VERSION):
     return {
         'region': 'us',
@@ -209,36 +215,38 @@ def consumer_info(version=DEFAULT_API_VERSION):
     }
 
 
-@app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
+@app.route_as_json('/api/<version>/feed/get/', methods=['GET', 'POST'])
 def feed(version=DEFAULT_API_VERSION):
     return app._paginated('objects', None, 30, feed_factory.feed())
 
 
-@app.route('/api/<version>/fireplace/feed/brands/<slug>/', methods=['GET'])
+@app.route_as_json('/api/<version>/fireplace/feed/brands/<slug>/',
+                   methods=['GET'])
 def feed_brand(version=DEFAULT_API_VERSION, slug=''):
     return feed_factory.brand(slug=slug)
 
 
-@app.route('/api/<version>/fireplace/feed/collections/<slug>/',
-           methods=['GET'])
+@app.route_as_json('/api/<version>/fireplace/feed/collections/<slug>/',
+                   methods=['GET'])
 def feed_collection(version=DEFAULT_API_VERSION, slug=''):
     return feed_factory.collection(name='slug', slug=slug)
 
 
-@app.route('/api/<version>/fireplace/feed/shelves/<slug>/', methods=['GET'])
+@app.route_as_json('/api/<version>/fireplace/feed/shelves/<slug>/',
+                   methods=['GET'])
 def feed_shelf(version=DEFAULT_API_VERSION, slug=''):
     return feed_factory.shelf(slug=slug)
 
 
-@app.route('/api/<version>/account/newsletter/', methods=['POST'])
+@app.cors_route('/api/<version>/account/newsletter/', methods=['POST'])
 def newsletter(version=DEFAULT_API_VERSION, id=None):
     return make_response('', 204)
 
 
-@app.route('/api/<version>/services/config/site/')
+@app.route_as_json('/api/<version>/services/config/site/')
 def site_config(version=DEFAULT_API_VERSION):
     return {'waffle': {}}
 
 
 if __name__ == '__main__':
-    app.run()
+    app.app.run(port=int(os.getenv('PORT', '5000')), debug=True)
