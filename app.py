@@ -60,6 +60,12 @@ def set_cors_headers(response, methods):
 
 
 def cors_route(*args, **kwargs):
+    methods = kwargs.get('methods')
+    if methods is not None:
+        cors_methods = set(methods or [])
+        cors_methods.add('OPTIONS')
+        kwargs['methods'] = cors_methods
+
     def wrap(fn):
         @wraps(fn)
         def inner(*args, **kwargs):
@@ -80,6 +86,8 @@ def route_as_json(*args, **kwargs):
     methods = kwargs.get('methods')
     cors_methods = set(methods or [])
     cors_methods.add('OPTIONS')
+    if methods is not None:
+        kwargs['methods'] = cors_methods
 
     def wrap(fn):
         @wraps(fn)
