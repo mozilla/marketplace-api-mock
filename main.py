@@ -142,6 +142,7 @@ def app_ratings(version=DEFAULT_API_VERSION):
     data = app._paginated('objects', review_generator, slug=slug)
     data['info'] = {
         'average': random.random() * 4 + 1,
+        'current_version': '2.0',
         'slug': slug,
     }
     data.update(factory.review_user_data(slug))
@@ -149,6 +150,11 @@ def app_ratings(version=DEFAULT_API_VERSION):
     if slug == 'has_rated':
         data['objects'][0]['has_flagged'] = False
         data['objects'][0]['is_author'] = True
+    elif slug == 'old-reviews':
+        for review in data['objects']:
+            review['version'] = {
+                'version': '1.0'
+            }
 
     return data
 
