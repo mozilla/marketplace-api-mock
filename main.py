@@ -97,7 +97,7 @@ def installed(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/fireplace/search/', endpoint='search-fireplace')
 @app.route('/api/<version>/apps/search/')
 def search(version=DEFAULT_API_VERSION):
-    query = request.args.get('q')
+    query = request.args.get('q', '')
 
     num_results = 0 if query == 'empty' else 42
 
