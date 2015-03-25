@@ -99,6 +99,7 @@ specially-altered objects that have some explicitly defined results.
 - ```/app/developed/``` returns an app that the user is the developer of
 - ```/app/packaged/``` returns a packaged app
 - ```/app/paid/``` returns a premium app
+- ```/app/num-previews-{X}/``` returns app with X number of previews
 - ```/app/tracking/``` returns an app with predictable fields for testing UA
     tracking
 - ```/app/upsell/``` returns an app with upsell information
@@ -125,3 +126,6 @@ specially-altered objects that have some explicitly defined results.
 - ```/feed/collection/coll-listing``` returns a listing collection
 - ```/feed/collection/coll-listing-desc``` returns a listing collection with a
   description
+- ```/search/?q=empty``` returns empty search results
+- ```/search/?q=num-previews-{X}``` returns search results where every app has
+  X number of previews

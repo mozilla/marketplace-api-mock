@@ -19,9 +19,9 @@ from factory import langpack as langpack_factory
 DEFAULT_API_VERSION = 'v1'
 
 
-def app_generator():
+def app_generator(**kw):
     while True:
-        yield factory.app()
+        yield factory.app(**kw)
 
 
 def langpack_generator():
@@ -98,8 +98,14 @@ def installed(version=DEFAULT_API_VERSION):
 @app.route('/api/<version>/apps/search/')
 def search(version=DEFAULT_API_VERSION):
     query = request.args.get('q')
-    data = app._paginated('objects', app_generator,
-                          0 if query == 'empty' else 42)
+
+    num_results = 0 if query == 'empty' else 42
+
+    app_kw = {}
+    if query.startswith('num-previews-'):
+        app_kw['num_previews'] = int(query.split('num-previews-')[1])
+
+    data = app._paginated('objects', app_generator, num_results, **app_kw)
     return data
 
 

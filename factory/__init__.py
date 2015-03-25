@@ -72,6 +72,7 @@ def app(**kw):
     global counter
     counter += 1
 
+    num_previews = kw.get('num_previews', 4)
     slug = kw.get('slug', 'app-%d' % counter)
 
     data = {
@@ -102,7 +103,7 @@ def app(**kw):
         'name': text('App %d' % counter),
         'notices': random.choice(MESSAGES),
         'premium_type': 'free',
-        'previews': [_app_preview() for i in range(4)],
+        'previews': [_app_preview() for i in range(num_previews)],
         'price': None,
         'price_locale': '$0.00',
         'privacy_policy': kw.get('privacy_policy', rand_text()),
@@ -147,9 +148,13 @@ def app(**kw):
         data['id'] = 1234
         data['author'] = 'Tracking'
         data['name'] = 'Tracking'
+    elif slug.startswith('num-previews-'):
+        data['previews'] = [_app_preview() for x in
+                            range(int(slug.split('num-previews-')[1]))]
 
-    if slug in SPECIAL_APP_SLUGS:
-        data['name'] = string.capwords(slug.replace('_', ' '))
+    if slug in SPECIAL_APP_SLUGS or slug.startswith('num-previews-'):
+        data['name'] = string.capwords(
+            slug.replace('_', ' ').replace('-', ' '))
 
     return data
 
