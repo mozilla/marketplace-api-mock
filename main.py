@@ -12,6 +12,7 @@ from flask import make_response, request
 import app
 
 import factory
+from factory import comm
 from factory import feed as feed_factory
 from factory import langpack as langpack_factory
 
@@ -238,6 +239,11 @@ def newsletter(version=DEFAULT_API_VERSION, id=None):
 @app.route('/api/<version>/services/config/site/')
 def site_config(version=DEFAULT_API_VERSION):
     return {'waffle': {}}
+
+
+@app.route('/api/<version>/comm/thread/<id>/')
+def comm_thread(version=DEFAULT_API_VERSION, id=None):
+    return comm.thread(id=id)
 
 
 if __name__ == '__main__':
