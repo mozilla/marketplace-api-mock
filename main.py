@@ -12,6 +12,7 @@ from flask import make_response, request
 import app
 
 import factory
+from factory.constants import CARRIERS, REGIONS
 from factory import comm
 from factory import feed as feed_factory
 from factory import langpack as langpack_factory
@@ -239,6 +240,36 @@ def newsletter(version=DEFAULT_API_VERSION, id=None):
 @app.route('/api/<version>/services/config/site/')
 def site_config(version=DEFAULT_API_VERSION):
     return {'waffle': {}}
+
+
+@app.route('/api/<version>/services/region/')
+def regions_list(version=DEFAULT_API_VERSION):
+    def gen():
+        return [factory.region(id=i, name=REGIONS[slug], slug=slug)
+                for i, slug in enumerate(REGIONS)]
+
+    data = app._paginated('objects', gen, len(REGIONS))
+    return data
+
+
+@app.route('/api/<version>/services/region/<slug>/')
+def regions_get(version=DEFAULT_API_VERSION, slug=None):
+    return factory.region(slug=slug)
+
+
+@app.route('/api/<version>/services/carrier/')
+def carriers_list(version=DEFAULT_API_VERSION):
+    def gen():
+        return [factory.carrier(id=i, name=CARRIERS[slug], slug=slug)
+                for i, slug in enumerate(CARRIERS)]
+
+    data = app._paginated('objects', gen, len(CARRIERS))
+    return data
+
+
+@app.route('/api/<version>/services/carrier/<slug>/')
+def carriers_get(version=DEFAULT_API_VERSION, slug=None):
+    return factory.carrier(slug=slug)
 
 
 @app.route('/api/<version>/comm/thread/<id>/')
