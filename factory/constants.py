@@ -9,21 +9,21 @@ AUTHORS = [
     text('Davor van der Beergulpen')
 ]
 
-CARRIERS = [
-    'america_movil',
-    'kddi',
-    'o2',
-    'telefonica',
-    'deutsche_telekom',
-]
+CARRIERS = {
+    'america_movil': 'America Movil',
+    'kddi': 'Kddi',
+    'o2': 'O2',
+    'telefonica': 'Telefonica',
+    'deutsche_telekom': 'DT',
+}
 
-REGIONS = [
-    'de',
-    'es',
-    'mx',
-    'jp',
-    'us'
-]
+REGIONS = {
+    'de': 'Germany',
+    'es': 'Spain',
+    'mx': 'Mexico',
+    'jp': 'Japan',
+    'us': 'United States',
+}
 
 MESSAGES = [
     ['be careful, cvan made it', 'loljk'],

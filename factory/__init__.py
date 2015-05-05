@@ -1,7 +1,6 @@
 import random
 import string
 from cgi import escape
-from datetime import datetime, timedelta
 
 from factory.constants import (AUTHORS, CARRIERS, MESSAGES, SPECIAL_APP_SLUGS,
                                REGIONS, SAMPLE_BG, SCREENSHOT_MAP,
@@ -26,12 +25,18 @@ def _app_preview():
 
 
 def carrier(**kw):
+    slug = kw.get('slug')
+    if not slug:
+        # No slug ? Pick a random carrier from the dict.
+        slug, name = random.choice(CARRIERS.items())
+    else:
+        # A slug was given ? Pick the corresponding carrier name or just make
+        # one up.
+        name = CARRIERS.get(slug, 'Seavan Sellular')
     return {
         'id': kw.get('id', 1),
-        'name': kw.get('name', 'Seavan Sellular'),
-        'resource_uri': kw.get('resource_uri',
-                               '/api/v1/services/carrier/seavan_sellular/'),
-        'slug': random.choice(CARRIERS),
+        'name': name,
+        'slug': slug,
     }
 
 
@@ -44,14 +49,18 @@ def _category(slug, name):
 
 
 def region(**kw):
+    slug = kw.get('slug')
+    if not slug:
+        # No slug ? Pick a random region from the dict.
+        slug, name = random.choice(REGIONS.items())
+    else:
+        # A slug was given ? Pick the corresponding region name or just make
+        # one up.
+        name = REGIONS.get(slug, 'Cvanistan')
     return {
         'id': kw.get('id', 1),
-        'name': kw.get('name', 'Appistan'),
-        'resource_uri': kw.get('resource_uri',
-                               '/api/v1/services/region/ap/'),
-        'slug': random.choice(REGIONS),
-        'default_currency': kw.get('default_currency', 'USD'),
-        'default_language': kw.get('default_language', 'en-AP'),
+        'name': name,
+        'slug': slug,
     }
 
 
