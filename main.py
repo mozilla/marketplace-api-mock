@@ -277,5 +277,11 @@ def comm_thread(version=DEFAULT_API_VERSION, id=None):
     return comm.thread(id=id)
 
 
+@app.route('/api/<version>/multi-search/')
+def multi_search(version=DEFAULT_API_VERSION):
+    with open('fixtures/multi-search.json') as f:
+        return json.load(f)
+
+
 if __name__ == '__main__':
     app.run()
