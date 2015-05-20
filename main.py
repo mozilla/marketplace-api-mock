@@ -285,12 +285,8 @@ def multi_search(version=DEFAULT_API_VERSION):
 
 @app.route('/api/<version>/websites/website/<pk>/')
 def website(version=DEFAULT_API_VERSION, pk=None):
-    with open('fixtures/multi-search.json') as f:
-        search_results = json.load(f)
-        for item in search_results['objects']:
-            if item['doc_type'] == 'website':
-                return item
-        raise RuntimeError('no websites...')
+    with open('fixtures/website.json') as f:
+        return json.load(f)
 
 
 if __name__ == '__main__':
