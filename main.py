@@ -289,5 +289,17 @@ def website(version=DEFAULT_API_VERSION, pk=None):
         return json.load(f)
 
 
+@app.route('/api/<version>/abuse/website/', methods=['POST'])
+def website_issue(version=DEFAULT_API_VERSION):
+    if request.form.get('text') and request.form.get('website'):
+        return {
+            'text': request.form['text'],
+            'reporter': request.form.get('reporter'),
+            'website': request.form['website']
+        }
+    else:
+        return make_response('', 400)
+
+
 if __name__ == '__main__':
     app.run()
