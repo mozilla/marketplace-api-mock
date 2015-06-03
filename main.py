@@ -277,7 +277,9 @@ def comm_thread(version=DEFAULT_API_VERSION, id=None):
     return comm.thread(id=id)
 
 
-@app.route('/api/<version>/multi-search/')
+@app.route('/api/<version>/fireplace/multi-search/',
+           endpoint='multi-search-fireplace')
+@app.route('/api/<version>/multi-search/', endpoint='multi-search')
 def multi_search(version=DEFAULT_API_VERSION):
     with open('fixtures/multi-search.json') as f:
         return json.load(f)
