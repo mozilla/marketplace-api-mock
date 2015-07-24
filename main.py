@@ -311,5 +311,11 @@ def website_issue(version=DEFAULT_API_VERSION):
         return make_response('', 400)
 
 
+@app.route('/api/<version>/games/daily/')
+def daily_games(version=DEFAULT_API_VERSION):
+    with open('fixtures/daily-games.json') as f:
+        return json.load(f)
+
+
 if __name__ == '__main__':
     app.run()
