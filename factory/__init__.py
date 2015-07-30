@@ -2,9 +2,10 @@ import random
 import string
 from cgi import escape
 
-from factory.constants import (AUTHORS, CARRIERS, MESSAGES, SPECIAL_APP_SLUGS,
-                               REGIONS, SAMPLE_BG, SCREENSHOT_MAP,
-                               SPECIAL_SLUGS_TO_IDS, USER_NAMES)
+from factory.constants import (AUTHORS, CARRIERS, MESSAGES, PROMO_IMAGES,
+                               SPECIAL_APP_SLUGS, REGIONS, SAMPLE_BG,
+                               SCREENSHOT_MAP, SPECIAL_SLUGS_TO_IDS,
+                               USER_NAMES)
 from factory.utils import rand_bool, rand_text, rand_datetime, text
 
 
@@ -115,6 +116,10 @@ def app(**kw):
         'previews': [_app_preview() for i in range(num_previews)],
         'price': None,
         'price_locale': '$0.00',
+        'promo_images': {
+            'small': random.choice(PROMO_IMAGES),
+            'large': random.choice(PROMO_IMAGES),
+        },
         'privacy_policy': kw.get('privacy_policy', rand_text()),
         'public_stats': False,
         'slug': slug,

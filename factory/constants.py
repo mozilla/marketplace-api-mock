@@ -31,6 +31,13 @@ MESSAGES = [
     None
 ]
 
+PROMO_IMAGES = [
+    'https://camo.githubusercontent.com/2b57d6cab55a353ad3527886d7c1d29e2fed4bda/687474703a2f2f66696c65732e6d6f6b612e636f2f73637265656e732f74616e785f30342e6a7067',
+    'http://cdn.akamai.steamstatic.com/steam/apps/327310/header.jpg?t=1423847161',
+    'http://8bitchimp.com/wp-content/uploads/2015/04/Bastion-2012-02-10-12-23-31-59.jpg',
+    'https://lh3.ggpht.com/sobmPoqky8bnZZ14BZ87OusQPzD_c3BJM89E_hb1oUwACiT_s4C9WP2r5hC31C4IPzc=h900',
+]
+
 SCREENSHOT_MAP = [
     (126, 126144),
     (131, 131610),
