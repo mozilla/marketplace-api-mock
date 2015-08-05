@@ -10,20 +10,6 @@ installation of the backend.
 
 ## Installation
 
-### Foreword
-
-A foreword, you may not need to install the Marketplace mock API yourself.
-There is an instance already set up and hosted:
-
-```
-https://flue.paas.allizom.org/
-```
-
-Some reasons that you might want to actually install the Marketplace mock API:
-
-* You're working on the API
-* You have a spotty internet connection
-* You're creating new features which use yet-to-be-built APIs
 
 ### Installation Process
 
