@@ -52,7 +52,7 @@ a ```time.sleep(X)``` into the view in ```main.py```.
 Note that you must be added to the Marketplace Stackato group. File a bug with
 ops (e.g., bugzilla.mozilla.org/show_bug.cgi?id=895478) to gain access.
 To deploy an update to the Marketplace mock API that is running on
-```https://flue.paas.allizom.org/```:
+__https://flue.paas.allizom.org/__:
 
 ```bash
 stackato group marketplace
