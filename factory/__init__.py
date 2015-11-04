@@ -12,6 +12,8 @@ from factory.utils import rand_bool, rand_text, rand_datetime, text
 
 counter = 0
 
+CDN_URL = 'https://marketplace-dev-cdn.allizom.org'
+
 
 def _app_preview():
     """Generate app preview object."""
@@ -274,21 +276,20 @@ def extension(**kw):
     counter += 1
     slug = kw.get('slug', 'add-on-%d' % counter)
     uuid = unicode(uuid4()).replace('-', '')
-    cdn_url = 'https://marketplace-dev-cdn.allizom.org'
 
     data = {
         'id': SPECIAL_SLUGS_TO_IDS.get(slug, counter),
         'author': random.choice(AUTHORS),
         'description': {
-            'en-US': escape(kw.get('description', rand_text(100))),
+            'en-US': escape(kw.get('description', rand_text(20))),
         },
         'device_types': [
             'firefoxos'
         ],
         'disabled': False,
         'icons': {
-            '64': '%s/media/img/mkt/logos/64.png' % cdn_url,
-            '128': '%s/media/img/mkt/logos/128.png' % cdn_url,
+            '64': '%s/media/img/mkt/logos/64.png' % CDN_URL,
+            '128': '%s/media/img/mkt/logos/128.png' % CDN_URL,
         },
         'last_updated': '2015-10-30T15:50:40',
         'latest_public_version': {
@@ -310,6 +311,42 @@ def extension(**kw):
         'slug': slug,
         'status': 'public',
         'uuid': uuid,
+    }
+    data = dict(data, **kw)
+    return data
+
+
+def website(**kw):
+    global counter
+    counter += 1
+
+    domain = '%s.example.com' % rand_text(2, separator='')
+    data = {
+        'categories': [
+            'news-weather'
+        ],
+        'description': {
+            'en-US': escape(kw.get('description', rand_text(30))),
+        },
+        'device_types': [
+            'firefoxos'
+        ],
+        'icons': {
+            '64': '%s/media/img/mkt/logos/64.png' % CDN_URL,
+            '128': '%s/media/img/mkt/logos/128.png' % CDN_URL,
+        },
+        'id': 2,
+        'mobile_url': 'http://m.%s/' % domain,
+        'name': {
+            'en-US': text('Website %d' % counter),
+        },
+        'short_name': {
+            'en-US': text('Site %d' % counter),
+        },
+        'title': {
+            'en-US': text('Website Title %d' % counter),
+        },
+        'url': 'http://%s/' % domain
     }
     data = dict(data, **kw)
     return data

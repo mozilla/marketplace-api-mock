@@ -41,6 +41,11 @@ def review_generator(**kw):
         yield factory.review(**kw)
 
 
+def website_generator(**kw):
+    while True:
+        yield factory.website(**kw)
+
+
 @app.route('/api/<version>/account/fxa-login/', methods=['POST'],
            endpoint='fxa-login')
 @app.route('/api/<version>/account/login/', methods=['POST'])
@@ -317,8 +322,7 @@ def multi_search(version=DEFAULT_API_VERSION):
 
 @app.route('/api/<version>/websites/website/<pk>/')
 def website(version=DEFAULT_API_VERSION, pk=None):
-    with open('fixtures/website.json') as f:
-        return json.load(f)
+    return factory.website(id=pk)
 
 
 @app.route('/api/<version>/abuse/website/', methods=['POST'])
@@ -331,6 +335,14 @@ def website_issue(version=DEFAULT_API_VERSION):
         }
     else:
         return make_response('', 400)
+
+
+@app.route('/api/<version>/websites/search/')
+def website_search(version=DEFAULT_API_VERSION):
+    query = request.args.get('q', '')
+    num_results = 0 if query == 'empty' else 42
+    data = app._paginated('objects', website_generator, num_results)
+    return data
 
 
 @app.route('/api/<version>/games/daily/')
