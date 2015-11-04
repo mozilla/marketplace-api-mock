@@ -46,6 +46,16 @@ def website_generator(**kw):
         yield factory.website(**kw)
 
 
+def multi_generator(doc_types=None, **kw):
+    doc_types_to_factories = {
+        'extension': factory.extension,
+        'webapp': factory.app,
+        'website': factory.website,
+    }
+    while True:
+        yield doc_types_to_factories[random.choice(doc_types)](**kw)
+
+
 @app.route('/api/<version>/account/fxa-login/', methods=['POST'],
            endpoint='fxa-login')
 @app.route('/api/<version>/account/login/', methods=['POST'])
@@ -316,8 +326,16 @@ def comm_thread(version=DEFAULT_API_VERSION, id=None):
            endpoint='multi-search-fireplace')
 @app.route('/api/<version>/multi-search/', endpoint='multi-search')
 def multi_search(version=DEFAULT_API_VERSION):
-    with open('fixtures/multi-search.json') as f:
-        return json.load(f)
+    query = request.args.get('q', '')
+    num_results = 0 if query == 'empty' else 42
+    kw = {
+        # The doc_type parameter in the API is singular even though it can
+        # contain multiple document types, separated by a comma. It defaults to
+        # webapp,website if absent.
+        'doc_types': request.args.get('doc_type', 'webapp,website').split(',')
+    }
+    data = app._paginated('objects', multi_generator, num_results, **kw)
+    return data
 
 
 @app.route('/api/<version>/websites/website/<pk>/')
