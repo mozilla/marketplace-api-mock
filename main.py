@@ -26,6 +26,11 @@ def app_generator(**kw):
         yield factory.app(**kw)
 
 
+def extension_generator(**kw):
+    while True:
+        yield factory.extension(**kw)
+
+
 def langpack_generator():
     while True:
         yield langpack_factory.langpack(url_root=request.url_root)
@@ -110,6 +115,18 @@ def search(version=DEFAULT_API_VERSION):
         app_kw['num_previews'] = int(query.split('num-previews-')[1])
 
     data = app._paginated('objects', app_generator, num_results, **app_kw)
+    return data
+
+
+@app.route('/api/<version>/extensions/search/')
+def extension_search(version=DEFAULT_API_VERSION):
+    query = request.args.get('q', '')
+
+    num_results = 0 if query == 'empty' else 42
+
+    extension_kw = {}
+    data = app._paginated('objects', extension_generator, num_results,
+                          **extension_kw)
     return data
 
 
@@ -211,6 +228,11 @@ def consumer_info(version=DEFAULT_API_VERSION):
         # New users default to recommendations enabled.
         'enable_recommendations': True
     }
+
+
+@app.route('/api/<version>/extensions/extension/<slug>/')
+def extension(version=DEFAULT_API_VERSION, slug=None):
+    return factory.extension(slug=slug)
 
 
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
