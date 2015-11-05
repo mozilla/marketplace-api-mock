@@ -22,18 +22,18 @@ app = Flask('Flue', static_url_path='/fireplace')
 
 def _paginated(field, generator, result_count=42, objects=None, **kw):
     per_page = int(request.args.get('limit', PER_PAGE))
-    page = int(request.args.get('offset', 0)) / per_page
-    if page * per_page > result_count:
+    offset = int(request.args.get('offset', 0))
+    if offset >= result_count:
         items = []
     elif objects:
         items = objects
     else:
         items = [gen for i, gen in
-                 zip(xrange(min(per_page, result_count - page * per_page)),
+                 zip(xrange(min(per_page, result_count - offset)),
                      generator(**kw))]
 
     next_page = None
-    if (page + 1) * per_page <= result_count:
+    if result_count > offset + per_page:
         next_page = request.url
         next_page = next_page[len(request.base_url) -
                               len(request.path + request.script_root):]
@@ -46,7 +46,7 @@ def _paginated(field, generator, result_count=42, objects=None, **kw):
             next_page = next_page[:next_page.index('?')]
         else:
             next_page_qs = {}
-        next_page_qs['offset'] = (page + 1) * per_page
+        next_page_qs['offset'] = offset + per_page
         next_page_qs['limit'] = per_page
         next_page = next_page + '?' + urllib.urlencode(next_page_qs)
 
@@ -54,7 +54,7 @@ def _paginated(field, generator, result_count=42, objects=None, **kw):
         field: items,
         'meta': {
             'limit': per_page,
-            'offset': per_page * page,
+            'offset': offset,
             'next': next_page,
             'total_count': result_count,
         },

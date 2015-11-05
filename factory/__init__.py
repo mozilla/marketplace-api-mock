@@ -1,6 +1,7 @@
 import random
 import string
 from cgi import escape
+from uuid import uuid4
 
 from factory.constants import (AUTHORS, CARRIERS, MESSAGES, PROMO_IMAGES,
                                SPECIAL_APP_SLUGS, REGIONS, SAMPLE_BG,
@@ -10,6 +11,8 @@ from factory.utils import rand_bool, rand_text, rand_datetime, text
 
 
 counter = 0
+
+CDN_URL = 'https://marketplace-dev-cdn.allizom.org'
 
 
 def _app_preview():
@@ -266,3 +269,84 @@ def preview():
         'filetype': 'image/png',
         'resource_uri': 'pi/v1/apps/preview/%d' % counter
     }
+
+
+def extension(**kw):
+    global counter
+    counter += 1
+    slug = kw.get('slug', 'add-on-%d' % counter)
+    uuid = unicode(uuid4()).replace('-', '')
+
+    data = {
+        'id': SPECIAL_SLUGS_TO_IDS.get(slug, counter),
+        'author': random.choice(AUTHORS),
+        'description': {
+            'en-US': escape(kw.get('description', rand_text(20))),
+        },
+        'device_types': [
+            'firefoxos'
+        ],
+        'disabled': False,
+        'icons': {
+            '64': '%s/media/img/mkt/logos/64.png' % CDN_URL,
+            '128': '%s/media/img/mkt/logos/128.png' % CDN_URL,
+        },
+        'last_updated': '2015-10-30T15:50:40',
+        'latest_public_version': {
+            'id': 294,
+            'created': '2015-10-29T13:53:12',
+            'download_url': '/extension/%s/42/extension-0.1.zip' % uuid,
+            'reviewer_mini_manifest_url':
+                '/extension/reviewers/%s/42/manifest.json' % uuid,
+            'unsigned_download_url':
+                '/downloads/extension/unsigned/%s/42/extension-0.1.zip' % uuid,
+            'size': 19062,
+            'status': 'public',
+            'version': '0.1'
+        },
+        'mini_manifest_url': '/extension/%s/manifest.json' % uuid,
+        'name': {
+            'en-US': text('Add-on %d' % counter),
+        },
+        'slug': slug,
+        'status': 'public',
+        'uuid': uuid,
+    }
+    data = dict(data, **kw)
+    return data
+
+
+def website(**kw):
+    global counter
+    counter += 1
+
+    domain = '%s.example.com' % rand_text(2, separator='')
+    data = {
+        'categories': [
+            'news-weather'
+        ],
+        'description': {
+            'en-US': escape(kw.get('description', rand_text(30))),
+        },
+        'device_types': [
+            'firefoxos'
+        ],
+        'icons': {
+            '64': '%s/media/img/mkt/logos/64.png' % CDN_URL,
+            '128': '%s/media/img/mkt/logos/128.png' % CDN_URL,
+        },
+        'id': 2,
+        'mobile_url': 'http://m.%s/' % domain,
+        'name': {
+            'en-US': text('Website %d' % counter),
+        },
+        'short_name': {
+            'en-US': text('Site %d' % counter),
+        },
+        'title': {
+            'en-US': text('Website Title %d' % counter),
+        },
+        'url': 'http://%s/' % domain
+    }
+    data = dict(data, **kw)
+    return data

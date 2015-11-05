@@ -26,6 +26,11 @@ def app_generator(**kw):
         yield factory.app(**kw)
 
 
+def extension_generator(**kw):
+    while True:
+        yield factory.extension(**kw)
+
+
 def langpack_generator():
     while True:
         yield langpack_factory.langpack(url_root=request.url_root)
@@ -34,6 +39,21 @@ def langpack_generator():
 def review_generator(**kw):
     while True:
         yield factory.review(**kw)
+
+
+def website_generator(**kw):
+    while True:
+        yield factory.website(**kw)
+
+
+def multi_generator(doc_types=None, **kw):
+    doc_types_to_factories = {
+        'extension': factory.extension,
+        'webapp': factory.app,
+        'website': factory.website,
+    }
+    while True:
+        yield doc_types_to_factories[random.choice(doc_types)](**kw)
 
 
 @app.route('/api/<version>/account/fxa-login/', methods=['POST'],
@@ -110,6 +130,18 @@ def search(version=DEFAULT_API_VERSION):
         app_kw['num_previews'] = int(query.split('num-previews-')[1])
 
     data = app._paginated('objects', app_generator, num_results, **app_kw)
+    return data
+
+
+@app.route('/api/<version>/extensions/search/')
+def extension_search(version=DEFAULT_API_VERSION):
+    query = request.args.get('q', '')
+
+    num_results = 0 if query == 'empty' else 42
+
+    extension_kw = {}
+    data = app._paginated('objects', extension_generator, num_results,
+                          **extension_kw)
     return data
 
 
@@ -213,6 +245,11 @@ def consumer_info(version=DEFAULT_API_VERSION):
     }
 
 
+@app.route('/api/<version>/extensions/extension/<slug>/')
+def extension(version=DEFAULT_API_VERSION, slug=None):
+    return factory.extension(slug=slug)
+
+
 @app.route('/api/<version>/feed/get/', methods=['GET', 'POST'])
 def feed(version=DEFAULT_API_VERSION):
     return app._paginated('objects', None, 30, feed_factory.feed())
@@ -289,14 +326,21 @@ def comm_thread(version=DEFAULT_API_VERSION, id=None):
            endpoint='multi-search-fireplace')
 @app.route('/api/<version>/multi-search/', endpoint='multi-search')
 def multi_search(version=DEFAULT_API_VERSION):
-    with open('fixtures/multi-search.json') as f:
-        return json.load(f)
+    query = request.args.get('q', '')
+    num_results = 0 if query == 'empty' else 42
+    kw = {
+        # The doc_type parameter in the API is singular even though it can
+        # contain multiple document types, separated by a comma. It defaults to
+        # webapp,website if absent.
+        'doc_types': request.args.get('doc_type', 'webapp,website').split(',')
+    }
+    data = app._paginated('objects', multi_generator, num_results, **kw)
+    return data
 
 
 @app.route('/api/<version>/websites/website/<pk>/')
 def website(version=DEFAULT_API_VERSION, pk=None):
-    with open('fixtures/website.json') as f:
-        return json.load(f)
+    return factory.website(id=pk)
 
 
 @app.route('/api/<version>/abuse/website/', methods=['POST'])
@@ -309,6 +353,14 @@ def website_issue(version=DEFAULT_API_VERSION):
         }
     else:
         return make_response('', 400)
+
+
+@app.route('/api/<version>/websites/search/')
+def website_search(version=DEFAULT_API_VERSION):
+    query = request.args.get('q', '')
+    num_results = 0 if query == 'empty' else 42
+    data = app._paginated('objects', website_generator, num_results)
+    return data
 
 
 @app.route('/api/<version>/games/daily/')

@@ -12,12 +12,14 @@ def text(default):
     return xss_text if XSS else default
 
 
-dummy_text = 'foo bar zip zap cvan fizz buzz something something'.split()
+dummy_text = ('foo bar zip zap cvan fizz buzz something martian salad '
+              'potato quality space ship rotfl alfalfa platypus dinosaur '
+              'shark bear dog cat snake elephant enough of this').split()
 
 
-def rand_text(n=10):
+def rand_text(n=10, separator=' '):
     """Generate random string."""
-    return text(' '.join(random.choice(dummy_text) for i in xrange(n)))
+    return text(separator.join(random.choice(dummy_text) for i in xrange(n)))
 
 
 def rand_bool():
