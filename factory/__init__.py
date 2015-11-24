@@ -11,6 +11,9 @@ from factory.utils import rand_bool, rand_text, rand_datetime, text
 
 
 counter = 0
+extension_counter = 0
+preview_counter = 0
+website_counter = 0
 
 CDN_URL = 'https://marketplace-dev-cdn.allizom.org'
 
@@ -224,8 +227,8 @@ def app_user_review(slug, **kw):
 
 
 def review(slug=None, **kw):
-    global counter
-    counter += 1
+    global review_counter
+    review_counter += 1
 
     version = None
     if rand_bool():
@@ -241,11 +244,11 @@ def review(slug=None, **kw):
         'has_flagged': False,
         'is_author': False,
         'modified': rand_datetime(),
-        'report_spam': '/api/v1/apps/rating/%d/flag/' % counter,
-        'resource_uri': '/api/v1/apps/rating/%d/' % counter,
+        'report_spam': '/api/v1/apps/rating/%d/flag/' % review_counter,
+        'resource_uri': '/api/v1/apps/rating/%d/' % review_counter,
         'user': {
             'display_name': text(random.choice(USER_NAMES)),
-            'id': counter,
+            'id': review_counter,
         },
         'version': version,
     }, **kw)
@@ -257,28 +260,28 @@ def review(slug=None, **kw):
 
 
 def preview():
-    global counter
-    counter += 1
+    global preview_counter
+    preview_counter += 1
 
     return {
-        'id': counter,
+        'id': preview_counter,
         'position': 1,
         'thumbnail_url': 'http://f.cl.ly/items/103C0e0I1d1Q1f2o3K2B/'
                          'mkt-collection-logo.png',
         'image_url': SAMPLE_BG,
         'filetype': 'image/png',
-        'resource_uri': 'pi/v1/apps/preview/%d' % counter
+        'resource_uri': 'pi/v1/apps/preview/%d' % preview_counter
     }
 
 
 def extension(**kw):
-    global counter
-    counter += 1
-    slug = kw.get('slug', 'add-on-%d' % counter)
+    global extension_counter
+    extension_counter += 1
+    slug = kw.get('slug', 'add-on-%d' % extension_counter)
     uuid = unicode(uuid4()).replace('-', '')
 
     data = {
-        'id': SPECIAL_SLUGS_TO_IDS.get(slug, counter),
+        'id': SPECIAL_SLUGS_TO_IDS.get(slug, extension_counter),
         'author': random.choice(AUTHORS),
         'description': {
             'en-US': escape(kw.get('description', rand_text(20))),
@@ -306,7 +309,7 @@ def extension(**kw):
         },
         'mini_manifest_url': '/extension/%s/manifest.json' % uuid,
         'name': {
-            'en-US': text('Add-on %d' % counter),
+            'en-US': text('Add-on %d' % extension_counter),
         },
         'slug': slug,
         'status': 'public',
@@ -317,8 +320,8 @@ def extension(**kw):
 
 
 def website(**kw):
-    global counter
-    counter += 1
+    global website_counter
+    website_counter += 1
 
     domain = '%s.example.com' % rand_text(2, separator='')
     data = {
@@ -335,16 +338,16 @@ def website(**kw):
             '64': '%s/media/img/mkt/logos/64.png' % CDN_URL,
             '128': '%s/media/img/mkt/logos/128.png' % CDN_URL,
         },
-        'id': 2,
+        'id': website_counter,
         'mobile_url': 'http://m.%s/' % domain,
         'name': {
-            'en-US': text('Website %d' % counter),
+            'en-US': text('Website %d' % website_counter),
         },
         'short_name': {
-            'en-US': text('Site %d' % counter),
+            'en-US': text('Site %d' % website_counter),
         },
         'title': {
-            'en-US': text('Website Title %d' % counter),
+            'en-US': text('Website Title %d' % website_counter),
         },
         'url': 'http://%s/' % domain
     }
