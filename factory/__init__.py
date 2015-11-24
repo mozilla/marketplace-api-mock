@@ -13,6 +13,7 @@ from factory.utils import rand_bool, rand_text, rand_datetime, text
 counter = 0
 extension_counter = 0
 preview_counter = 0
+review_counter = 0
 website_counter = 0
 
 CDN_URL = 'https://marketplace-dev-cdn.allizom.org'
