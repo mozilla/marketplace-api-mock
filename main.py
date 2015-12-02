@@ -328,12 +328,17 @@ def comm_thread(version=DEFAULT_API_VERSION, id=None):
 def multi_search(version=DEFAULT_API_VERSION):
     query = request.args.get('q', '')
     num_results = 0 if query == 'empty' else 42
+
     kw = {
         # The doc_type parameter in the API is singular even though it can
         # contain multiple document types, separated by a comma. It defaults to
         # webapp,website if absent.
         'doc_types': request.args.get('doc_type', 'webapp,website').split(',')
     }
+
+    if query.startswith('num-previews-'):
+        kw['num_previews'] = int(query.split('num-previews-')[1])
+
     data = app._paginated('objects', multi_generator, num_results, **kw)
     return data
 
