@@ -106,7 +106,7 @@ def app(**kw):
         'description': {'en-US': escape(kw.get('description',
                                                rand_text(100)))},
         'device_types': ['desktop', 'firefoxos', 'android-mobile',
-                         'android-tablet'],
+                         'android-tablet', 'firefoxos-tv'],
         'file_size': 12345,
         'homepage': 'http://marketplace.mozilla.org/',
         'icons': {
@@ -137,6 +137,7 @@ def app(**kw):
         'release_notes': kw.get('release_notes', rand_text(100)),
         'support_email': text('support@%s.com' % slug),
         'support_url': text('support.%s.com' % slug),
+        'tv_featured': random.choice([True, False]),
         'upsell': False,
     }
 
