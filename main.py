@@ -359,10 +359,7 @@ def multi_search_tv(version=DEFAULT_API_VERSION):
     if query.startswith('num-previews-'):
         kw['num_previews'] = int(query.split('num-previews-')[1])
 
-    data = app._paginated(
-        'objects',
-        (lambda: multi_generator(device_types=('webapp', 'website'))),
-        num_results, **kw)
+    data = app._paginated('objects', multi_generator, num_results, **kw)
     return data
 
 
